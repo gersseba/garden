@@ -41,7 +41,7 @@
   - `util/` — Helpers (ImageUtils, DateUtils, PermissionHelper)
 
 ## Development Workflow
-1. Read `docs/project-brief/index.md` for feature context and current sprint.
+1. Read `docs/project-documentation/index.md` for feature context and current sprint.
 2. Create a focused branch: `feature/sprint-N-description` or `bugfix/issue-NNN`.
 3. Implement feature with tests:
    - Write unit tests for ViewModels and repositories.
@@ -61,7 +61,7 @@
   - **Current:** Immediate tasks generated from photo analysis + time elapsed (regenerated when user uploads photo or checks in)
 - **Photo Gallery:** Store photos locally (Room) with timestamps; lazy-load using Glide/Coil.
 - **Error Handling:** Catch API errors (rate limits, invalid auth) gracefully; display user-friendly messages.
-- **Architecture Docs:** Keep arc42 docs in `docs/project-brief/<chapter-slug>/index.md` with frontmatter.
+- **Architecture Docs:** Keep arc42 docs in `docs/project-documentation/<chapter-slug>/index.md` with frontmatter.
 - **Diagrams:** Use Mermaid for architecture/runtime diagrams in markdown documentation.
 
 ## Do Not

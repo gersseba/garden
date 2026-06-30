@@ -60,9 +60,9 @@ git clone <repo> project-devops # DevOps (only when needed)
 
 ## Project Bootstrap
 
-### 1. Create `docs/project-brief/` chapter docs
+### 1. Create `docs/project-documentation/` chapter docs
 
-The single source of truth across all chats. Use `docs/project-brief/index.md` as entrypoint and store each chapter in `docs/project-brief/<chapter-slug>/index.md` with frontmatter.
+The single source of truth across all chats. Use `docs/project-documentation/index.md` as entrypoint and store each chapter in `docs/project-documentation/<chapter-slug>/index.md` with frontmatter.
 
 **Required sections (do not abbreviate):**
 1. Project Overview
@@ -94,21 +94,21 @@ See the [sprint plan template](./references/sprint-plan-template.md). Every spri
 ### 4. Execute Sprints
 
 ```
-Read docs/project-brief/index.md, then read docs/sprint-N/plan.md. Execute Sprint N.
+Read docs/project-documentation/index.md, then read docs/sprint-N/plan.md. Execute Sprint N.
 
 First: git pull origin main && git checkout -b feature/sprint-N
 
 Close GitHub Issues in commits: "fix: description (Fixes #NN)"
 Update docs/sprint-N/progress.md after each phase.
 When done, push and create PR: git push origin feature/sprint-N
-Follow the relevant chapters in docs/project-brief (handoff, bug tracking, multi-repo setup).
+Follow the relevant chapters in docs/project-documentation (handoff, bug tracking, multi-repo setup).
 ```
 
 ### 5. QA Sign-off
 
 After dev merges, QA does a full playthrough:
 ```
-Read docs/project-brief/index.md and relevant chapters. You are Ivy (QA).
+Read docs/project-documentation/index.md and relevant chapters. You are Ivy (QA).
 Sprint N is merged to main. Do full playthrough.
 File bugs as GitHub Issues. Write docs/qa/sprint-N-signoff.md.
 ```
@@ -119,12 +119,12 @@ When a chat gets long (>100 messages), save state and start fresh:
 
 **Before closing:**
 1. Update `docs/sprint-N/progress.md` with current status
-2. Update impacted chapter files in `docs/project-brief/`
+2. Update impacted chapter files in `docs/project-documentation/`
 3. Write `docs/sprint-N/done.md`
 
 **Cold start prompt:**
 ```
-Read docs/project-brief/index.md and docs/sprint-N/progress.md.
+Read docs/project-documentation/index.md and docs/sprint-N/progress.md.
 Continue from where it left off.
 ```
 

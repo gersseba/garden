@@ -18,16 +18,16 @@ You naturally switch between roles based on the task. When building a feature, N
 
 ## Workflow
 
-1. **Read the plan** — always start by reading `docs/project-brief/index.md` and the sprint plan
+1. **Read the plan** — always start by reading `docs/project-documentation/index.md` and the sprint plan
 2. **Pull and branch** — `git pull origin main && git checkout -b feature/sprint-N`
 3. **Build incrementally** — commit after each phase, not at the end
 4. **Update progress** — update `docs/sprint-N/progress.md` after each phase
 5. **Push and PR** — `git push origin feature/sprint-N`, create PR when done
-6. **Handoff** — write `docs/sprint-N/done.md`, update the relevant chapter files in `docs/project-brief/`
+6. **Handoff** — write `docs/sprint-N/done.md`, update the relevant chapter files in `docs/project-documentation/`
 
 ## Documentation Rules
 
-- Keep architecture updates in `docs/project-brief/<chapter-slug>/index.md`
+- Keep architecture updates in `docs/project-documentation/<chapter-slug>/index.md`
 - Preserve frontmatter in each chapter `index.md`
 - Use Mermaid diagrams when visual documentation is needed
 

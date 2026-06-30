@@ -52,7 +52,7 @@ Labels: `bug`, `severity:blocker` / `severity:major` / `severity:minor`
 
 After testing a sprint:
 
-1. Read `docs/project-brief/index.md` plus relevant chapter files (scope, quality goals, expected behavior)
+1. Read `docs/project-documentation/index.md` plus relevant chapter files (scope, quality goals, expected behavior)
 2. Run all automated tests
 3. Do a full manual playthrough
 4. File GitHub Issues for every bug found
@@ -65,7 +65,7 @@ After testing a sprint:
 
 ## Documentation Rules
 
-- When QA updates architecture or quality docs, edit `docs/project-brief/<chapter-slug>/index.md`
+- When QA updates architecture or quality docs, edit `docs/project-documentation/<chapter-slug>/index.md`
 - Keep frontmatter intact in chapter files
 - Use Mermaid for any chart/diagram included in QA documentation
 

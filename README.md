@@ -23,7 +23,7 @@ cd garden
 ### For the AI Agent Team
 
 **Start here:**
-1. Read [`PROJECT_BRIEF.md`](./PROJECT_BRIEF.md) — single source of truth for the entire project
+1. Read [`docs/project-documentation/index.md`](./docs/project-documentation/index.md) — single source of truth (arc42 architecture)
 2. Read `.github/copilot-instructions.md` — project-specific coding standards
 3. Read `.github/instructions/garden-plant-features.instructions.md` — plant app domain patterns
 
@@ -44,7 +44,14 @@ cd garden
 
 ```
 garden/
-├── PROJECT_BRIEF.md              ← Single source of truth
+├── docs/
+│   ├── project-documentation/    ← Single source of truth (arc42)
+│   │   ├── index.md
+│   │   ├── 01-introduction-and-goals/
+│   │   ├── 02-architecture-constraints/
+│   │   ├── ... (10 more chapters)
+│   │   └── 12-glossary/
+│   └── sprint-N/                 ← Sprint planning & progress
 ├── README.md                     ← This file
 ├── .github/
 │   ├── copilot-instructions.md   ← Project coding standards
@@ -65,13 +72,6 @@ garden/
 │   └── skills/
 │       ├── ai-team-orchestration/SKILL.md
 │       └── android-testing-workflow.md
-├── docs/
-│   ├── sprint-1/
-│   │   ├── plan.md
-│   │   ├── progress.md
-│   │   └── done.md
-│   └── qa/
-│       └── sprint-1-signoff.md
 └── app/
     ├── src/main/java/com/gersseba/garden/
     │   ├── MainActivity.java
@@ -246,11 +246,11 @@ Aim for >80% coverage on:
 
 ## Resources
 
-- **Project Brief:** [`PROJECT_BRIEF.md`](./PROJECT_BRIEF.md)
-- **Code Standards:** `.github/copilot-instructions.md`
-- **Domain Patterns:** `.github/instructions/garden-plant-features.instructions.md`
-- **Android Best Practices:** `.github/instructions/android-java.instructions.md`
-- **Agent Safety:** `.github/instructions/agent-safety.instructions.md`
+- **Architecture (arc42):** [`docs/project-documentation/index.md`](./docs/project-documentation/index.md)
+- **Code Standards:** [`.github/copilot-instructions.md`](./.github/copilot-instructions.md)
+- **Domain Patterns:** [`.github/instructions/garden-plant-features.instructions.md`](./.github/instructions/garden-plant-features.instructions.md)
+- **Android Best Practices:** [`.github/instructions/android-java.instructions.md`](./.github/instructions/android-java.instructions.md)
+- **Agent Safety:** [`.github/instructions/agent-safety.instructions.md`](./.github/instructions/agent-safety.instructions.md)
 
 ---
 
@@ -267,7 +267,7 @@ Aim for >80% coverage on:
 ## Support
 
 For questions or blockers:
-- Check `PROJECT_BRIEF.md` for project context
+- Check `docs/project-documentation/` for architecture context
 - Review `.github/instructions/` for coding patterns
 - Ask Remy (Producer) for sprint/scope questions
 - Ask Ivy (QA) for testing strategy
@@ -275,5 +275,9 @@ For questions or blockers:
 ---
 
 **Last Updated:** June 30, 2026
+
+
+
+
 
 
