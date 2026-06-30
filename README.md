@@ -20,6 +20,26 @@ cd garden
 - Android Studio auto-syncs Gradle
 - Run → Run 'app' → select emulator or device
 
+### Gemini API Key Setup
+
+The app uses the Gemini API for plant identification and health analysis.  
+You must configure your API key **before** building or running the app.
+
+1. Copy the example template:
+   ```bash
+   cp local.properties.example local.properties
+   ```
+2. Open `local.properties` and replace the placeholder with your real key:
+   ```properties
+   GEMINI_API_KEY=AIza...your_actual_key_here
+   ```
+3. Get a free key at <https://aistudio.google.com/app/apikey>
+
+> **⚠️ Never commit `local.properties`** — it is listed in `.gitignore`.  
+> The key is injected into `BuildConfig.GEMINI_API_KEY` at build time and is never visible in source code.
+>
+> If the key is missing, the build will still succeed but a warning is printed at configuration time and Gemini API calls will fail at runtime with a clear error message.
+
 ### For the AI Agent Team
 
 **Start here:**
