@@ -1,9 +1,9 @@
 ---
-title: "Project Brief (arc42)"
+title: "Project Documentation (arc42)"
 doc_type: "arc42-index"
 ---
 
-# Project Brief (arc42)
+# Project Documentation (arc42)
 
 Use this chapter index as the canonical architecture entrypoint.
 
@@ -20,3 +20,4 @@ Use this chapter index as the canonical architecture entrypoint.
 - [10. Quality Requirements](./10-quality-requirements/index.md)
 - [11. Risks and Technical Debt](./11-risks-and-technical-debt/index.md)
 - [12. Glossary](./12-glossary/index.md)
+- [13. Ticket Workflow](./13-ticket-workflow/index.md)

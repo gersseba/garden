@@ -380,7 +380,7 @@ These are the official requirements from awesome-copilot. The agent does NOT dee
 4. **Validate After Changes** - Run `/validate` after `/bootstrap` or `/migrate`
 5. **Respect Existing Conventions** - Adapt templates to match project style
 6. **Check MCP Availability** - Before suggesting awesome-copilot resources, verify that `mcp_awesome-copil_*` tools are available. If not present, do NOT suggest or reference these tools. Simply skip the community resource suggestions.
-7. **Documentation Structure** - For arc42/project brief docs, use `docs/project-documentation/<chapter-slug>/index.md` with frontmatter and an index file at `docs/project-documentation/index.md`.
+7. **Documentation Structure** - For arc42/project docs, use `docs/project-documentation/<chapter-slug>/index.md` with frontmatter and an index file at `docs/project-documentation/index.md`.
 8. **Diagram Format** - Use Mermaid instead of ASCII diagrams in markdown docs.
 
 ## MCP Tool Detection
