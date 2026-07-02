@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ===================== Buttons ===================== -->
+
+    <!-- Primary filled button (garden green) -->
+    <style name="Widget.Garden.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/button_min_height</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:paddingStart">@dimen/spacing_24</item>
+        <item name="android:paddingEnd">@dimen/spacing_24</item>
+        <item name="cornerRadius">@dimen/card_corner_radius</item>
+        <item name="backgroundTint">@color/garden_green</item>
+        <item name="android:textColor">@color/on_primary</item>
+    </style>
+
+    <!-- Secondary outlined button -->
+    <style name="Widget.Garden.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/button_min_height</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:paddingStart">@dimen/spacing_24</item>
+        <item name="android:paddingEnd">@dimen/spacing_24</item>
+        <item name="cornerRadius">@dimen/card_corner_radius</item>
+        <item name="strokeColor">@color/garden_green</item>
+        <item name="android:textColor">@color/garden_green</item>
+    </style>
+
+    <!-- Text / ghost button -->
+    <style name="Widget.Garden.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">@dimen/button_min_height</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:textColor">@color/garden_green</item>
+    </style>
+
+    <!-- ===================== Cards ===================== -->
+
+    <style name="Widget.Garden.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="contentPadding">@dimen/card_padding</item>
+        <item name="android:layout_margin">@dimen/card_margin</item>
+    </style>
+
+    <!-- ===================== TextViews ===================== -->
+
+    <style name="TextAppearance.Garden.Headline" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">@dimen/text_size_headline</item>
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.Garden.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">@dimen/text_size_title</item>
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.Garden.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.Garden.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">@dimen/text_size_caption</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+
+    <!-- ===================== TextInputLayout ===================== -->
+
+    <style name="Widget.Garden.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/input_corner_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/input_corner_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/input_corner_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/input_corner_radius</item>
+        <item name="boxStrokeColor">@color/garden_green</item>
+        <item name="hintTextColor">@color/garden_green</item>
+    </style>
+
+    <!-- ===================== Toolbar ===================== -->
+
+    <style name="Widget.Garden.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/garden_green</item>
+        <item name="android:elevation">4dp</item>
+        <item name="titleTextColor">@color/on_primary</item>
+        <item name="navigationIconTint">@color/on_primary</item>
+    </style>
+
+</resources>

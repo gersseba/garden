@@ -1,5 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Brand / Primary -->
+    <color name="garden_green">#2D6A4F</color>
+    <color name="garden_green_dark">#1B4332</color>
+    <color name="garden_green_light">#52B788</color>
+    <color name="garden_green_container">#D8F3DC</color>
+
+    <!-- Surface / Background -->
+    <color name="background">#F1FAEE</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#EFF4EF</color>
+
+    <!-- On-colors (text / icon tints on colored surfaces) -->
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_primary_container">#1B4332</color>
+    <color name="on_surface">#1C1B1F</color>
+    <color name="on_surface_variant">#49454F</color>
+    <color name="on_background">#1C1B1F</color>
+
+    <!-- Accent -->
+    <color name="accent">#52B788</color>
+    <color name="accent_dark">#40916C</color>
+
+    <!-- Error -->
+    <color name="error">#E63946</color>
+    <color name="error_container">#FFDAD6</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="on_error_container">#410002</color>
+
+    <!-- Outline / Divider -->
+    <color name="outline">#79747E</color>
+    <color name="outline_variant">#CAC4D0</color>
+
+    <!-- Toxicity indicators -->
+    <color name="toxicity_safe">#40916C</color>
+    <color name="toxicity_caution">#E9C46A</color>
+    <color name="toxicity_danger">#E63946</color>
+
+    <!-- Health status colors (matches AI result states) -->
+    <color name="health_good">#40916C</color>
+    <color name="health_caution">#F4A261</color>
+    <color name="health_poor">#E63946</color>
+
+    <!-- Legacy (kept for vector drawable compatibility) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
