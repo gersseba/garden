@@ -40,7 +40,7 @@ Include test evidence in PR body:
   - `...`
 ```
 
-If tests cannot be run locally, block and report to Producer with the exact reason.
+**Instrumentation / device tests exception:** If `./gradlew test lint` passes but `connectedAndroidTest` cannot run due to no connected device or emulator (e.g. pure mock-UI or early navigation scaffold tickets), you may open the PR. Document the gap explicitly in the PR body under Test Evidence and add a `known-limitation: no-device` note. Do **not** block the PR for this reason alone.
 
 ## GitHub MCP-First Policy
 
