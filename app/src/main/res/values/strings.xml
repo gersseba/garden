@@ -9,8 +9,14 @@
     <string name="my_plants_screen_title">My Plants</string>
     <string name="my_plants_mock_description">Mocked plant list for the upcoming catalog experience.</string>
     <string name="my_plants_mock_items">• Monstera deliciosa\n• Snake plant\n• Cherry tomato</string>
+    <string name="my_plants_empty_message">No plants yet. Tap + to add one.</string>
+    <string name="my_plants_fab_description">Add a plant</string>
+    <string name="my_plants_photo_description">Plant photo placeholder</string>
 
     <string name="care_plan_screen_title">Care Plan</string>
     <string name="care_plan_mock_description">Mocked monthly care plan for the upcoming planning experience.</string>
     <string name="care_plan_mock_items">• Week 1: Check soil moisture\n• Week 2: Rotate indoor pots\n• Week 3: Inspect leaves for pests\n• Week 4: Refresh mulch</string>
+
+    <string name="plant_detail_screen_title">Plant Detail</string>
+    <string name="plant_detail_stub_message">Full plant detail coming in a later update.</string>
 </resources>
