@@ -24,7 +24,27 @@
         android:id="@+id/myPlantsFragment"
         android:name="com.gersseba.garden.fragment.MyPlantsFragment"
         android:label="@string/my_plants_screen_title"
-        tools:layout="@layout/fragment_my_plants" />
+        tools:layout="@layout/fragment_my_plants">
+
+        <action
+            android:id="@+id/action_myPlantsFragment_to_plantDetailFragment"
+            app:destination="@id/plantDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/plantDetailFragment"
+        android:name="com.gersseba.garden.fragment.PlantDetailFragment"
+        android:label="@string/plant_detail_screen_title"
+        tools:layout="@layout/fragment_plant_detail">
+
+        <argument
+            android:name="plantId"
+            app:argType="long" />
+        <argument
+            android:name="plantName"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
 
     <fragment
         android:id="@+id/carePlanFragment"
