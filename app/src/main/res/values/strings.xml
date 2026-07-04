@@ -41,4 +41,43 @@
 
     <string name="plant_detail_screen_title">Plant Detail</string>
     <string name="plant_detail_stub_message">Full plant detail coming in a later update.</string>
+
+    <!-- Plant detail section headings -->
+    <string name="plant_detail_photos_section">Photo Gallery</string>
+    <string name="plant_detail_general_info_section">General Information</string>
+    <string name="plant_detail_care_plan_section">Care Plan</string>
+
+    <!-- General info field labels -->
+    <string name="plant_detail_label_species">Species</string>
+    <string name="plant_detail_label_family">Family</string>
+    <string name="plant_detail_label_light">Light requirements</string>
+    <string name="plant_detail_label_watering">Watering frequency</string>
+    <string name="plant_detail_label_soil">Soil type</string>
+
+    <!-- Mocked general info values (aligns with PlantEntity fields) -->
+    <string name="mock_scientific_name">Monstera deliciosa</string>
+    <string name="mock_plant_family">Araceae</string>
+    <string name="mock_sun_exposure">Bright indirect light</string>
+    <string name="mock_watering_frequency">Every 7–10 days</string>
+    <string name="mock_soil_type">Well-draining potting mix</string>
+
+    <!-- Mocked AI photo summaries (aligns with PhotoEntity.healthAnalysis) -->
+    <string name="mock_photo_summary_1">Healthy leaf development observed; foliage looks vibrant and well-hydrated.</string>
+    <string name="mock_photo_summary_2">Root structure appears stable; no signs of overwatering or nutrient deficiency detected.</string>
+    <string name="mock_photo_summary_3">Plant is showing strong growth; consider rotating for even light exposure.</string>
+
+    <!-- Photo gallery accessibility -->
+    <string name="plant_detail_photo_description">Plant photo placeholder</string>
+
+    <!-- Detail care task names (aligns with CarePlanEntity.taskType) -->
+    <string name="detail_task_prune_spring">Prune in spring</string>
+    <string name="detail_task_fertilize_monthly">Fertilize monthly</string>
+    <string name="detail_task_repot_biennial">Repot every 2 years</string>
+    <string name="detail_task_wipe_leaves">Wipe leaves monthly</string>
+
+    <!-- Detail care task descriptions (aligns with CarePlanEntity.description) -->
+    <string name="detail_task_prune_spring_desc">Cut back leggy stems in early spring to encourage bushier, more compact growth.</string>
+    <string name="detail_task_fertilize_monthly_desc">Apply a balanced liquid fertilizer at half strength during the growing season.</string>
+    <string name="detail_task_repot_biennial_desc">Move to a pot one size larger when roots start escaping the drainage holes.</string>
+    <string name="detail_task_wipe_leaves_desc">Gently wipe leaves with a damp cloth to remove dust and improve light absorption.</string>
 </resources>

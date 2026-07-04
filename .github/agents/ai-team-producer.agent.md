@@ -17,6 +17,8 @@ When the user describes a set of features/tasks:
 1. Read project context from docs to avoid duplicate or conflicting tickets.
 2. Break requested work into discrete, independently deliverable GitHub Issues.
 3. Group tickets into one or more **work packages**.
+   - Default to a **single work package** when the requested tickets are closely related parts of one feature slice.
+   - If there is only one work package in play, you do **not** need to explicitly name or label it in the user-facing plan unless the user asks for that level of detail.
 4. Create issues via `github/issue_write` with:
    - Clear title
    - Problem statement
