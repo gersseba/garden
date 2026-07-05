@@ -85,6 +85,9 @@ public class PlantDetailViewModelTest {
         assertEquals("Medium light", info.sunExposure);
         assertEquals("Every 14 days", info.wateringFrequency);
         assertEquals("Cactus blend", info.soilType);
+        assertEquals("Placeholder Text", info.description);
+        assertEquals("Placeholder Text", info.healthHumansClassification);
+        assertEquals("Placeholder Text", info.carePlacement);
     }
 
     @Test
