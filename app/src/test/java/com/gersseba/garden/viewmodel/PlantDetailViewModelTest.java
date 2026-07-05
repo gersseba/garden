@@ -89,7 +89,7 @@ public class PlantDetailViewModelTest {
 
     @Test
     public void init_loadsPhotosFromRepository() {
-        repository.setPhotos(Collections.singletonList(new PlantPhoto(123, "", LocalDateTime.now(), "Healthy growth")));
+        repository.setPhotos(Collections.singletonList(new PlantPhoto(1L, 123, "", LocalDateTime.now(), "Healthy growth")));
         viewModel.getPhotos().observeForever(photos -> {}); // Force LiveData transformation
         viewModel.init(4L);
 
@@ -98,6 +98,18 @@ public class PlantDetailViewModelTest {
         assertEquals(1, photos.size());
         assertEquals(123, photos.get(0).imageResId);
         assertEquals("Healthy growth", photos.get(0).aiSummary);
+    }
+
+    @Test
+    public void deletePhotoAt_callsRepository() {
+        PlantPhoto photo = new PlantPhoto(100L, 123, "", LocalDateTime.now(), "");
+        repository.setPhotos(Collections.singletonList(photo));
+        viewModel.getPhotos().observeForever(photos -> {});
+        viewModel.init(1L);
+
+        viewModel.deletePhotoAt(0);
+
+        assertEquals(100L, repository.lastDeletedPhotoId);
     }
 
     @Test
@@ -113,6 +125,7 @@ public class PlantDetailViewModelTest {
         private final MutableLiveData<List<Plant>> plantsLiveData = new MutableLiveData<>(Collections.emptyList());
         private final MutableLiveData<Plant> plantLiveData = new MutableLiveData<>();
         private final MutableLiveData<List<PlantPhoto>> photosLiveData = new MutableLiveData<>(Collections.emptyList());
+        long lastDeletedPhotoId = -1L;
 
         void setPlant(Plant plant) {
             plantLiveData.setValue(plant);
@@ -150,6 +163,10 @@ public class PlantDetailViewModelTest {
                 String[] photoSummaries) {
             // Not used in PlantDetailViewModel tests.
         }
+
+        @Override
+        public void deletePhoto(long photoId) {
+            lastDeletedPhotoId = photoId;
+        }
     }
 }
-

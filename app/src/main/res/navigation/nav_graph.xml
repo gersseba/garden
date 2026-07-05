@@ -40,6 +40,22 @@
         <argument
             android:name="plantId"
             app:argType="long" />
+
+        <action
+            android:id="@+id/action_plantDetailFragment_to_fullscreenGalleryFragment"
+            app:destination="@id/fullscreenGalleryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fullscreenGalleryFragment"
+        android:name="com.gersseba.garden.fragment.FullscreenGalleryFragment"
+        android:label="Fullscreen Gallery"
+        tools:layout="@layout/fragment_fullscreen_gallery">
+
+        <argument
+            android:name="startPosition"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
 
     <fragment

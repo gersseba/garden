@@ -108,24 +108,23 @@ public class MyPlantsViewModelTest {
         }
 
         @Override
-        public void addPlant(String commonName,
-                String scientificName,
-                String plantFamily,
-                String sunExposure,
-                String wateringFrequency,
-                String soilType,
-                boolean isIndoor,
-                String notes,
-                int[] photoDrawableIds,
-                String[] photoSummaries) {
+        public void addPlant(String commonName, String scientificName, String plantFamily, String sunExposure, String wateringFrequency, String soilType, boolean isIndoor, String notes, int[] photoDrawableIds, String[] photoSummaries) {
             addCalls++;
             lastCommonName = commonName;
             lastPhotoDrawables = photoDrawableIds;
             lastPhotoSummaries = photoSummaries;
 
-            List<Plant> current = new ArrayList<>(plantsLiveData.getValue());
-            current.add(new Plant(addCalls, commonName, scientificName, plantFamily, LocalDate.now(), sunExposure, wateringFrequency, soilType, isIndoor, notes));
+            List<Plant> current = plantsLiveData.getValue();
+            if (current == null) {
+                current = new ArrayList<>();
+            }
+            current.add(new Plant(0L, commonName, scientificName, plantFamily, LocalDate.now(), sunExposure, wateringFrequency, soilType, isIndoor, notes));
             plantsLiveData.setValue(current);
+        }
+
+        @Override
+        public void deletePhoto(long photoId) {
+            // Not used in MyPlantsViewModel tests.
         }
     }
 }

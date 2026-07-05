@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class PlantDetailViewModel extends AndroidViewModel {
 
+    private final PlantRepositoryContract repository;
     private final MutableLiveData<Long> selectedPlantId = new MutableLiveData<>();
     private final LiveData<Plant> selectedPlantLiveData;
     private final LiveData<String> plantNameLiveData;
@@ -40,6 +41,7 @@ public class PlantDetailViewModel extends AndroidViewModel {
     PlantDetailViewModel(@NonNull Application application,
             @NonNull PlantRepositoryContract repository) {
         super(application);
+        this.repository = repository;
         this.selectedPlantLiveData = Transformations.switchMap(
                 selectedPlantId,
                 repository::observePlant);
@@ -82,6 +84,17 @@ public class PlantDetailViewModel extends AndroidViewModel {
 
     public LiveData<List<PlantCareTask>> getCareTasks() {
         return careTasksLiveData;
+    }
+
+    /**
+     * Deletes a photo at the given position in the current photo list.
+     * @param position index in the {@link #getPhotos()} list.
+     */
+    public void deletePhotoAt(int position) {
+        List<PlantPhoto> photos = photosLiveData.getValue();
+        if (photos != null && position >= 0 && position < photos.size()) {
+            repository.deletePhoto(photos.get(position).id);
+        }
     }
 
     private PlantDetailInfo mapDetailInfo(Plant plant) {

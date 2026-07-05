@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.recyclerview)
+    implementation(libs.viewpager2)
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
     testImplementation(libs.junit)

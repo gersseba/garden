@@ -26,4 +26,6 @@ public interface PlantRepositoryContract {
             @NonNull String notes,
             int[] photoDrawableIds,
             @NonNull String[] photoSummaries);
+
+    void deletePhoto(long photoId);
 }

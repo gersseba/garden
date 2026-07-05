@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
  */
 public class PlantPhoto {
 
+    public final long id;
+
     @DrawableRes
     public final int imageResId;
 
@@ -22,10 +24,12 @@ public class PlantPhoto {
     @NonNull public final String aiSummary;
 
     public PlantPhoto(
+            long id,
             @DrawableRes int imageResId,
             @NonNull String photoPath,
             @NonNull LocalDateTime capturedAt,
             @NonNull String aiSummary) {
+        this.id = id;
         this.imageResId = imageResId;
         this.photoPath = photoPath;
         this.capturedAt = capturedAt;

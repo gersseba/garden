@@ -22,15 +22,6 @@
             android:scaleType="centerCrop"
             tools:src="@drawable/plant_placeholder" />
 
-        <TextView
-            android:id="@+id/photo_ai_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            tools:text="Healthy leaf development observed; foliage looks vibrant and well-hydrated." />
-
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
-
