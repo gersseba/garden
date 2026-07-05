@@ -32,8 +32,8 @@ public class LocalizedTextRepositoryTest {
 
         @Override
         public androidx.lifecycle.LiveData<LocalizedTextEntity> getByEntityAndKeyLive(String entityType, long entityId, String key) {
-            // Not used in these unit tests
-            return null;
+            // Return non-null LiveData for consumers; value may be null
+            return new androidx.lifecycle.MutableLiveData<>(null);
         }
 
         @Override
@@ -95,4 +95,5 @@ public class LocalizedTextRepositoryTest {
         Assert.assertEquals("Plant2 EN", p2);
     }
 }
+
 
