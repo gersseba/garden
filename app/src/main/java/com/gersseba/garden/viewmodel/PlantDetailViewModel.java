@@ -15,6 +15,7 @@ import com.gersseba.garden.model.PlantDetailInfo;
 import com.gersseba.garden.model.PlantPhoto;
 import com.gersseba.garden.repository.PlantRepository;
 import com.gersseba.garden.repository.PlantRepositoryContract;
+import com.gersseba.garden.repository.LocalizedTextRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ public class PlantDetailViewModel extends AndroidViewModel {
     private final LiveData<String> plantNameLiveData;
     private final LiveData<List<PlantPhoto>> photosLiveData;
     private final LiveData<PlantDetailInfo> generalInfoLiveData;
+    private final LiveData<String> generalInfoTextLiveData;
+    private final LocalizedTextRepository localizedTextRepository;
     private final MutableLiveData<List<PlantCareTask>> careTasksLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> plantDeletedLiveData = new MutableLiveData<>(false);
 
@@ -43,6 +46,15 @@ public class PlantDetailViewModel extends AndroidViewModel {
             @NonNull PlantRepositoryContract repository) {
         super(application);
         this.repository = repository;
+        LocalizedTextRepository tmp;
+        try {
+            tmp = new LocalizedTextRepository(application);
+        } catch (Exception e) {
+            // In unit tests the Room database may not be available; fall back to a deterministic no-op implementation.
+            System.err.println("LocalizedTextRepository unavailable, using NoOp fallback: " + e.getMessage());
+            tmp = new com.gersseba.garden.repository.NoOpLocalizedTextRepository();
+        }
+        this.localizedTextRepository = tmp;
         this.selectedPlantLiveData = Transformations.switchMap(
                 selectedPlantId,
                 repository::observePlant);
@@ -53,6 +65,12 @@ public class PlantDetailViewModel extends AndroidViewModel {
                 plant -> plant != null ? plant.name : "");
         this.generalInfoLiveData = Transformations.map(selectedPlantLiveData,
                 this::mapDetailInfo);
+
+        this.generalInfoTextLiveData = Transformations.switchMap(selectedPlantLiveData, plant -> {
+            if (plant == null) return new MutableLiveData<>(null);
+            if (localizedTextRepository == null) return new MutableLiveData<>(null);
+            return localizedTextRepository.getLocalizedTextLive("plant", plant.id, "general_info", java.util.Locale.getDefault());
+        });
 
         careTasksLiveData.setValue(buildMockedCareTasks());
     }
@@ -81,6 +99,10 @@ public class PlantDetailViewModel extends AndroidViewModel {
 
     public LiveData<PlantDetailInfo> getGeneralInfo() {
         return generalInfoLiveData;
+    }
+
+    public LiveData<String> getGeneralInfoText() {
+        return generalInfoTextLiveData;
     }
 
     public LiveData<List<PlantCareTask>> getCareTasks() {
