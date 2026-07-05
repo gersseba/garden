@@ -55,9 +55,9 @@ public class PlantCareTaskAdapter
         }
 
         void bind(@NonNull PlantCareTask task) {
+            // Keep short labels resource-backed; descriptions may be long and could be localized via DB in future.
             binding.detailCareTaskName.setText(task.taskTypeRes);
             binding.detailCareTaskDescription.setText(task.descriptionRes);
         }
     }
 }
-
