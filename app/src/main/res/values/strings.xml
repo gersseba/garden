@@ -63,6 +63,8 @@
     <!-- Plant detail section headings -->
     <string name="plant_detail_photos_section">Photo Gallery</string>
     <string name="plant_detail_general_info_section">General Information</string>
+    <string name="plant_detail_health_toxicity_section">Health and Toxicity</string>
+    <string name="plant_detail_care_section">Care</string>
     <string name="plant_detail_care_plan_section">Care Plan</string>
 
     <!-- General info field labels -->
@@ -72,12 +74,38 @@
     <string name="plant_detail_label_watering">Watering frequency</string>
     <string name="plant_detail_label_soil">Soil type</string>
 
+    <!-- Health and Toxicity field labels -->
+    <string name="plant_detail_label_humans">Humans</string>
+    <string name="plant_detail_label_cats">Cats</string>
+    <string name="plant_detail_label_tortoises">Tortoises</string>
+
+    <!-- Health classifications -->
+    <string name="health_classification_good">Good</string>
+    <string name="health_classification_ok">OK</string>
+    <string name="health_classification_bad">Bad</string>
+
+    <!-- Care field labels -->
+    <string name="plant_detail_label_placement">Placement</string>
+    <string name="plant_detail_label_cutting">Cutting</string>
+    <string name="plant_detail_label_nutrients">Required Nutrients</string>
+
     <!-- Mocked general info values (aligns with PlantEntity fields) -->
     <string name="mock_scientific_name">Monstera deliciosa</string>
     <string name="mock_plant_family">Araceae</string>
     <string name="mock_sun_exposure">Bright indirect light</string>
     <string name="mock_watering_frequency">Every 7–10 days</string>
     <string name="mock_soil_type">Well-draining potting mix</string>
+    <string name="mock_description">This plant is known for its beautiful foliage and ease of care. It belongs to the Araceae family and is native to tropical regions. It can grow quite large indoors given the right conditions.</string>
+
+    <!-- Mocked Health and Toxicity values -->
+    <string name="mock_health_humans">Safe to handle, however do not ingest any part of the plant.</string>
+    <string name="mock_health_cats">Toxic to cats if ingested. Can cause irritation and swelling.</string>
+    <string name="mock_health_tortoises">Generally safe for tortoises, but should not be a primary food source.</string>
+
+    <!-- Mocked Care values -->
+    <string name="mock_care_placement">Place in a spot with bright, indirect sunlight. Avoid direct midday sun.</string>
+    <string name="mock_care_cutting">Prune yellowing leaves at the base. You can also take stem cuttings to propagate.</string>
+    <string name="mock_care_nutrients">Requires a balanced liquid fertilizer every 4 weeks during the growing season.</string>
 
     <!-- Mocked AI photo summaries (aligns with PhotoEntity.healthAnalysis) -->
     <string name="mock_photo_summary_1">Healthy leaf development observed; foliage looks vibrant and well-hydrated.</string>

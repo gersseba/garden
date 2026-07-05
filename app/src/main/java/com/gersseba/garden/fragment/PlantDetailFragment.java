@@ -93,11 +93,25 @@ public class PlantDetailFragment extends Fragment {
     }
 
     private void bindGeneralInfo(@NonNull PlantDetailInfo info) {
+        binding.generalInfoDescription.setText(info.description);
         binding.generalInfoSpeciesValue.setText(info.scientificName);
         binding.generalInfoFamilyValue.setText(info.plantFamily);
         binding.generalInfoLightValue.setText(info.sunExposure);
         binding.generalInfoWateringValue.setText(info.wateringFrequency);
         binding.generalInfoSoilValue.setText(info.soilType);
+
+        // Bind Health and Toxicity
+        binding.healthHumansClassification.setText(info.healthHumansClassification);
+        binding.healthHumansText.setText(info.healthHumansText);
+        binding.healthCatsClassification.setText(info.healthCatsClassification);
+        binding.healthCatsText.setText(info.healthCatsText);
+        binding.healthTortoisesClassification.setText(info.healthTortoisesClassification);
+        binding.healthTortoisesText.setText(info.healthTortoisesText);
+
+        // Bind Care
+        binding.carePlacementText.setText(info.carePlacement);
+        binding.careCuttingText.setText(info.careCutting);
+        binding.careNutrientsText.setText(info.careNutrients);
     }
 
     @Override

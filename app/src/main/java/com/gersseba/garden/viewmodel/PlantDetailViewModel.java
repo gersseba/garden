@@ -99,7 +99,7 @@ public class PlantDetailViewModel extends AndroidViewModel {
 
     private PlantDetailInfo mapDetailInfo(Plant plant) {
         if (plant == null) {
-            return new PlantDetailInfo("", "", "", "", "", "", false, "");
+            return new PlantDetailInfo("", "", "", "", "", "", false, "", "", "", "", "", "", "", "", "", "", "");
         }
         return new PlantDetailInfo(
                 plant.scientificName,
@@ -109,7 +109,26 @@ public class PlantDetailViewModel extends AndroidViewModel {
                 plant.wateringFrequency,
                 plant.soilType,
                 plant.isIndoor,
-                plant.notes);
+                plant.notes,
+                safeGetString(R.string.mock_description),
+                safeGetString(R.string.health_classification_good),
+                safeGetString(R.string.mock_health_humans),
+                safeGetString(R.string.health_classification_bad),
+                safeGetString(R.string.mock_health_cats),
+                safeGetString(R.string.health_classification_ok),
+                safeGetString(R.string.mock_health_tortoises),
+                safeGetString(R.string.mock_care_placement),
+                safeGetString(R.string.mock_care_cutting),
+                safeGetString(R.string.mock_care_nutrients));
+    }
+
+    private String safeGetString(@androidx.annotation.StringRes int resId) {
+        try {
+            return getApplication().getString(resId);
+        } catch (Exception e) {
+            // Return a placeholder for unit tests where Application context may be limited
+            return "Placeholder Text";
+        }
     }
 
     /**
