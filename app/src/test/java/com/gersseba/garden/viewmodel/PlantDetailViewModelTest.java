@@ -1,12 +1,24 @@
 package com.gersseba.garden.viewmodel;
 
+import android.app.Application;
+
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import com.gersseba.garden.model.Plant;
 import com.gersseba.garden.model.PlantCareTask;
 import com.gersseba.garden.model.PlantDetailInfo;
 import com.gersseba.garden.model.PlantPhoto;
+import com.gersseba.garden.repository.PlantRepositoryContract;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -14,132 +26,130 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Unit tests for {@link PlantDetailViewModel} mocked data builders.
- *
- * Tests call the {@code buildMocked*()} methods directly to avoid LiveData/Looper
- * setup — the same strategy used by {@code CarePlanViewModelTest}.
+ * Unit tests for {@link PlantDetailViewModel} repository-backed detail state.
  */
 public class PlantDetailViewModelTest {
 
+    @Rule
+    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+
     private PlantDetailViewModel viewModel;
+    private FakePlantRepository repository;
 
     @Before
     public void setUp() {
-        viewModel = new PlantDetailViewModel();
-    }
-
-    // ── buildMockedPhotos ──────────────────────────────────────────────────
-
-    @Test
-    public void buildMockedPhotos_returnsNonEmptyList() {
-        List<PlantPhoto> photos = viewModel.buildMockedPhotos();
-
-        assertNotNull(photos);
-        assertFalse("Expected at least one mocked photo", photos.isEmpty());
+        repository = new FakePlantRepository();
+        viewModel = new PlantDetailViewModel(new Application(), repository);
     }
 
     @Test
-    public void buildMockedPhotos_returnsAtLeastThreePhotos() {
-        List<PlantPhoto> photos = viewModel.buildMockedPhotos();
+    public void init_loadsPlantNameFromRepository() {
+        repository.setPlant(new Plant(
+                7L,
+                "Monstera deliciosa",
+                "Monstera deliciosa",
+                "Araceae",
+                LocalDate.now(),
+                "Bright indirect light",
+                "Every 7-10 days",
+                "Well-draining mix",
+                true,
+                ""));
+        viewModel.getPlantName().observeForever(name -> {}); // Force LiveData transformation
+        viewModel.init(7L);
 
-        assertEquals("Expected 3 mocked photos", 3, photos.size());
+        assertEquals("Monstera deliciosa", viewModel.getPlantName().getValue());
     }
 
     @Test
-    public void buildMockedPhotos_allPhotosHaveNonZeroResourceIds() {
-        List<PlantPhoto> photos = viewModel.buildMockedPhotos();
+    public void init_loadsGeneralInfoFromRepository() {
+        repository.setPlant(new Plant(
+                10L,
+                "Snake plant",
+                "Dracaena trifasciata",
+                "Asparagaceae",
+                LocalDate.of(2024, 1, 1),
+                "Medium light",
+                "Every 14 days",
+                "Cactus blend",
+                true,
+                "Slow grower"));
+        viewModel.getGeneralInfo().observeForever(info -> {}); // Force LiveData transformation
+        viewModel.init(10L);
 
-        for (PlantPhoto photo : photos) {
-            assertFalse("drawableRes must be a valid resource ID", photo.drawableRes == 0);
-            assertFalse("aiSummaryRes must be a valid resource ID", photo.aiSummaryRes == 0);
-        }
-    }
-
-    @Test
-    public void buildMockedPhotos_allDrawableResourceIdsAreDistinct() {
-        List<PlantPhoto> photos = viewModel.buildMockedPhotos();
-
-        assertEquals("Expected 3 photos", 3, photos.size());
-        assertFalse("Photo 0 and 1 should use different drawables",
-                photos.get(0).drawableRes == photos.get(1).drawableRes);
-        assertFalse("Photo 1 and 2 should use different drawables",
-                photos.get(1).drawableRes == photos.get(2).drawableRes);
-    }
-
-    // ── buildMockedGeneralInfo ─────────────────────────────────────────────
-
-    @Test
-    public void buildMockedGeneralInfo_returnsNonNull() {
-        PlantDetailInfo info = viewModel.buildMockedGeneralInfo();
-
+        PlantDetailInfo info = viewModel.getGeneralInfo().getValue();
         assertNotNull(info);
+        assertEquals("Dracaena trifasciata", info.scientificName);
+        assertEquals("Asparagaceae", info.plantFamily);
+        assertEquals("2024-01-01", info.dateAdded);
+        assertEquals("Medium light", info.sunExposure);
+        assertEquals("Every 14 days", info.wateringFrequency);
+        assertEquals("Cactus blend", info.soilType);
     }
 
     @Test
-    public void buildMockedGeneralInfo_allFieldsHaveNonZeroResourceIds() {
-        PlantDetailInfo info = viewModel.buildMockedGeneralInfo();
+    public void init_loadsPhotosFromRepository() {
+        repository.setPhotos(Collections.singletonList(new PlantPhoto(123, "", LocalDateTime.now(), "Healthy growth")));
+        viewModel.getPhotos().observeForever(photos -> {}); // Force LiveData transformation
+        viewModel.init(4L);
 
-        assertFalse("scientificNameRes must be a valid resource ID", info.scientificNameRes == 0);
-        assertFalse("plantFamilyRes must be a valid resource ID", info.plantFamilyRes == 0);
-        assertFalse("sunExposureRes must be a valid resource ID", info.sunExposureRes == 0);
-        assertFalse("wateringFrequencyRes must be a valid resource ID", info.wateringFrequencyRes == 0);
-        assertFalse("soilTypeRes must be a valid resource ID", info.soilTypeRes == 0);
+        List<PlantPhoto> photos = viewModel.getPhotos().getValue();
+        assertNotNull(photos);
+        assertEquals(1, photos.size());
+        assertEquals(123, photos.get(0).imageResId);
+        assertEquals("Healthy growth", photos.get(0).aiSummary);
     }
 
-    // ── buildMockedCareTasks ───────────────────────────────────────────────
-
     @Test
-    public void buildMockedCareTasks_returnsNonEmptyList() {
-        List<PlantCareTask> tasks = viewModel.buildMockedCareTasks();
+    public void getCareTasks_returnsMockedDefaultTasks() {
+        List<PlantCareTask> tasks = viewModel.getCareTasks().getValue();
 
         assertNotNull(tasks);
-        assertFalse("Expected at least one mocked care task", tasks.isEmpty());
+        assertFalse(tasks.isEmpty());
+        assertEquals(4, tasks.size());
     }
 
-    @Test
-    public void buildMockedCareTasks_returnsAtLeastThreeTasks() {
-        List<PlantCareTask> tasks = viewModel.buildMockedCareTasks();
+    private static final class FakePlantRepository implements PlantRepositoryContract {
+        private final MutableLiveData<List<Plant>> plantsLiveData = new MutableLiveData<>(Collections.emptyList());
+        private final MutableLiveData<Plant> plantLiveData = new MutableLiveData<>();
+        private final MutableLiveData<List<PlantPhoto>> photosLiveData = new MutableLiveData<>(Collections.emptyList());
 
-        assertEquals("Expected 4 mocked care tasks", 4, tasks.size());
-    }
-
-    @Test
-    public void buildMockedCareTasks_allTasksHaveNonZeroResourceIds() {
-        List<PlantCareTask> tasks = viewModel.buildMockedCareTasks();
-
-        for (PlantCareTask task : tasks) {
-            assertFalse("taskTypeRes must be a valid resource ID", task.taskTypeRes == 0);
-            assertFalse("descriptionRes must be a valid resource ID", task.descriptionRes == 0);
+        void setPlant(Plant plant) {
+            plantLiveData.setValue(plant);
         }
-    }
 
-    // ── model constructors ─────────────────────────────────────────────────
+        void setPhotos(List<PlantPhoto> photos) {
+            photosLiveData.setValue(photos);
+        }
 
-    @Test
-    public void plantPhoto_storesAllFields() {
-        PlantPhoto photo = new PlantPhoto(1, 2);
+        @Override
+        public LiveData<List<Plant>> observePlants() {
+            return plantsLiveData;
+        }
 
-        assertEquals(1, photo.drawableRes);
-        assertEquals(2, photo.aiSummaryRes);
-    }
+        @Override
+        public LiveData<Plant> observePlant(long plantId) {
+            return plantLiveData;
+        }
 
-    @Test
-    public void plantDetailInfo_storesAllFields() {
-        PlantDetailInfo info = new PlantDetailInfo(1, 2, 3, 4, 5);
+        @Override
+        public LiveData<List<PlantPhoto>> observePhotosForPlant(long plantId) {
+            return photosLiveData;
+        }
 
-        assertEquals(1, info.scientificNameRes);
-        assertEquals(2, info.plantFamilyRes);
-        assertEquals(3, info.sunExposureRes);
-        assertEquals(4, info.wateringFrequencyRes);
-        assertEquals(5, info.soilTypeRes);
-    }
-
-    @Test
-    public void plantCareTask_storesAllFields() {
-        PlantCareTask task = new PlantCareTask(1, 2);
-
-        assertEquals(1, task.taskTypeRes);
-        assertEquals(2, task.descriptionRes);
+        @Override
+        public void addPlant(String commonName,
+                String scientificName,
+                String plantFamily,
+                String sunExposure,
+                String wateringFrequency,
+                String soilType,
+                boolean isIndoor,
+                String notes,
+                int[] photoDrawableIds,
+                String[] photoSummaries) {
+            // Not used in PlantDetailViewModel tests.
+        }
     }
 }
 

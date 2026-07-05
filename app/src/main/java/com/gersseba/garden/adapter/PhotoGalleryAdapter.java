@@ -14,7 +14,6 @@ import java.util.List;
 
 /**
  * RecyclerView adapter that renders the horizontal photo gallery on the Plant Detail screen.
- * Each item shows a placeholder image and an AI-generated summary beneath it.
  */
 public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapter.PhotoViewHolder> {
 
@@ -54,8 +53,8 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
         }
 
         void bind(@NonNull PlantPhoto photo) {
-            binding.photoImage.setImageResource(photo.drawableRes);
-            binding.photoAiSummary.setText(photo.aiSummaryRes);
+            binding.photoImage.setImageResource(photo.imageResId);
+            binding.photoAiSummary.setText(photo.aiSummary);
         }
     }
 }

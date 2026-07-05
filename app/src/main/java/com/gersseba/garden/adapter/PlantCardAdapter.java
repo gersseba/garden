@@ -7,22 +7,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gersseba.garden.databinding.ItemPlantCardBinding;
-import com.gersseba.garden.model.MockPlant;
+import com.gersseba.garden.model.Plant;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * RecyclerView adapter that renders a list of {@link MockPlant} entries as tappable cards.
+ * RecyclerView adapter that renders a list of persisted {@link Plant} entries as tappable cards.
  */
 public class PlantCardAdapter extends RecyclerView.Adapter<PlantCardAdapter.PlantViewHolder> {
 
     /** Callback invoked when the user taps a plant card. */
     public interface OnPlantClickListener {
-        void onPlantClicked(MockPlant plant);
+        void onPlantClicked(Plant plant);
     }
 
-    private List<MockPlant> plants = new ArrayList<>();
+    private List<Plant> plants = new ArrayList<>();
     private final OnPlantClickListener clickListener;
 
     public PlantCardAdapter(@NonNull OnPlantClickListener clickListener) {
@@ -30,7 +30,7 @@ public class PlantCardAdapter extends RecyclerView.Adapter<PlantCardAdapter.Plan
     }
 
     /** Replaces the displayed list and notifies the adapter. */
-    public void setPlants(@NonNull List<MockPlant> newPlants) {
+    public void setPlants(@NonNull List<Plant> newPlants) {
         plants = new ArrayList<>(newPlants);
         notifyDataSetChanged();
     }
@@ -62,7 +62,7 @@ public class PlantCardAdapter extends RecyclerView.Adapter<PlantCardAdapter.Plan
             this.binding = binding;
         }
 
-        void bind(@NonNull MockPlant plant, @NonNull OnPlantClickListener listener) {
+        void bind(@NonNull Plant plant, @NonNull OnPlantClickListener listener) {
             binding.plantName.setText(plant.name);
             binding.getRoot().setOnClickListener(v -> listener.onPlantClicked(plant));
         }

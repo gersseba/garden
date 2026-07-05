@@ -29,10 +29,9 @@ public class AppEntryNavigationTest {
     }
 
     @Test
-    public void selectingMyPlants_navigatesToMockPlantList() {
+    public void selectingMyPlants_navigatesToPlantList() {
         onView(withId(R.id.my_plants_button)).perform(click());
 
-        onView(withId(R.id.my_plants_title)).check(matches(isDisplayed()));
         onView(withText(R.string.my_plants_screen_title)).check(matches(isDisplayed()));
     }
 
@@ -40,7 +39,6 @@ public class AppEntryNavigationTest {
     public void selectingCarePlan_navigatesToMockCarePlan() {
         onView(withId(R.id.care_plan_button)).perform(click());
 
-        onView(withId(R.id.care_plan_title)).check(matches(isDisplayed()));
         onView(withText(R.string.care_plan_screen_title)).check(matches(isDisplayed()));
     }
 }

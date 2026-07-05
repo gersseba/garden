@@ -51,11 +51,11 @@ Say "go" (or name a specific work package) when you want me to orchestrate execu
 For each selected work package/ticket in dependency order:
 
 1. Announce start: `Starting ticket #{N}: {Title}`
-2. Hand off to Dev agent to implement and open PR.
+2. Hand off to Dev agent **one ticket at a time** to implement and open PR.
 3. Hand off to Reviewer agent to review PR.
-4. Relay feedback loop between Dev and Reviewer until approval.
+4. Relay feedback loop between Dev and Reviewer until approval. **Dev must address all comments, including non-blocking ones.**
 5. Confirm merge and issue closure.
-6. Move to the next ticket.
+6. Move to the next ticket (only after current ticket is fully merged).
 
 ### Phase 3: Report Completion
 After all selected work is done:
@@ -67,6 +67,7 @@ After all selected work is done:
 ## Orchestration Rules
 
 - Do not start implementation until user explicitly says to start.
+- Hand off one ticket at a time to Dev (no parallel work).
 - Support partial execution (for example: "run WP-2 only").
 - Keep one ticket per PR.
 - Preserve dependency order unless user asks for parallel work.
