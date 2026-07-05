@@ -76,4 +76,3 @@ public class ResourceLocalizationRepositoryTest {
         assertEquals("", out);
     }
 }
-

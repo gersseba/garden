@@ -52,4 +52,3 @@ public class ResourceLocalizationRepository implements LocalizationRepository {
         return "";
     }
 }
-
