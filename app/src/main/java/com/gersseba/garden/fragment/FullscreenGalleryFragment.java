@@ -109,12 +109,16 @@ public class FullscreenGalleryFragment extends Fragment {
         PlantPhoto photo = photos.get(position);
         binding.fullscreenDateText.setText(photo.capturedAt.format(DATE_FORMATTER));
 
-        if (photo.aiSummary != null && !photo.aiSummary.isEmpty()) {
-            binding.fullscreenSummaryText.setVisibility(View.VISIBLE);
-            binding.fullscreenSummaryText.setText(photo.aiSummary);
-        } else {
-            binding.fullscreenSummaryText.setVisibility(View.GONE);
-        }
+        // Prefer DB localized ai summary when present
+        viewModel.getPhotoSummaryLive(photo.id).observe(getViewLifecycleOwner(), dbSummary -> {
+            String summary = dbSummary != null && !dbSummary.isEmpty() ? dbSummary : photo.aiSummary;
+            if (summary != null && !summary.isEmpty()) {
+                binding.fullscreenSummaryText.setVisibility(View.VISIBLE);
+                binding.fullscreenSummaryText.setText(summary);
+            } else {
+                binding.fullscreenSummaryText.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -123,4 +127,3 @@ public class FullscreenGalleryFragment extends Fragment {
         binding = null;
     }
 }
-
