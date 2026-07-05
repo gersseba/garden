@@ -103,6 +103,16 @@ public class PlantDetailFragment extends Fragment {
         viewModel.getGeneralInfo().observe(getViewLifecycleOwner(),
                 this::bindGeneralInfo);
 
+        // Prefer DB-backed long-form general info when available; fall back to resource/mocked description
+        viewModel.getGeneralInfoText().observe(getViewLifecycleOwner(), text -> {
+            if (text != null && !text.isEmpty()) {
+                binding.generalInfoDescription.setText(text);
+            } else {
+                PlantDetailInfo info = viewModel.getGeneralInfo().getValue();
+                if (info != null) binding.generalInfoDescription.setText(info.description);
+            }
+        });
+
         viewModel.getCareTasks().observe(getViewLifecycleOwner(),
                 tasks -> careTaskAdapter.submitList(tasks));
 
