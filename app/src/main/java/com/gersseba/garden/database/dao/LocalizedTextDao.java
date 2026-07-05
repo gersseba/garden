@@ -27,5 +27,5 @@ public interface LocalizedTextDao {
 
     @Query("DELETE FROM localized_texts WHERE id = :id")
     void deleteById(long id);
-}
 
+}

@@ -10,6 +10,10 @@ import androidx.room.PrimaryKey;
         tableName = "localized_texts",
         indices = {@Index(value = {"entity_type", "entity_id", "key"})}
 )
+@Entity(
+        tableName = "localized_texts",
+        indices = {@Index(value = {"entity_type", "entity_id", "key"})}
+)
 public class LocalizedTextEntity {
 
     @PrimaryKey(autoGenerate = true)
@@ -49,5 +53,3 @@ public class LocalizedTextEntity {
         this.updatedAt = updatedAt;
     }
 }
-
-

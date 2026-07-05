@@ -84,6 +84,5 @@ public class LocalizedTextRepository implements LocalizedTextDataSource {
         if (e.textEn != null && !e.textEn.isEmpty()) return e.textEn;
         return null;
     }
+
 }
-
-

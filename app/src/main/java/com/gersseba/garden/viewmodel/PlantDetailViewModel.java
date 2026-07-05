@@ -46,13 +46,11 @@ public class PlantDetailViewModel extends AndroidViewModel {
             @NonNull PlantRepositoryContract repository) {
         super(application);
         this.repository = repository;
-        LocalizedTextRepository tmp;
+        LocalizedTextRepository tmp = null;
         try {
             tmp = new LocalizedTextRepository(application);
-        } catch (Exception e) {
-            // In unit tests the Room database may not be available; fall back to a deterministic no-op implementation.
-            System.err.println("LocalizedTextRepository unavailable, using NoOp fallback: " + e.getMessage());
-            tmp = new com.gersseba.garden.repository.NoOpLocalizedTextRepository();
+        } catch (Exception ignored) {
+            // In unit tests the Room database may not be available; fall back to null repository.
         }
         this.localizedTextRepository = tmp;
         this.selectedPlantLiveData = Transformations.switchMap(
