@@ -33,6 +33,7 @@ public class PlantDetailViewModel extends AndroidViewModel {
     private final LiveData<List<PlantPhoto>> photosLiveData;
     private final LiveData<PlantDetailInfo> generalInfoLiveData;
     private final MutableLiveData<List<PlantCareTask>> careTasksLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> plantDeletedLiveData = new MutableLiveData<>(false);
 
     public PlantDetailViewModel(@NonNull Application application) {
         this(application, new PlantRepository(application));
@@ -86,6 +87,10 @@ public class PlantDetailViewModel extends AndroidViewModel {
         return careTasksLiveData;
     }
 
+    public LiveData<Boolean> getPlantDeleted() {
+        return plantDeletedLiveData;
+    }
+
     /**
      * Deletes a photo at the given position in the current photo list.
      * @param position index in the {@link #getPhotos()} list.
@@ -94,6 +99,17 @@ public class PlantDetailViewModel extends AndroidViewModel {
         List<PlantPhoto> photos = photosLiveData.getValue();
         if (photos != null && position >= 0 && position < photos.size()) {
             repository.deletePhoto(photos.get(position).id);
+        }
+    }
+
+    /**
+     * Deletes the currently selected plant.
+     */
+    public void deletePlant() {
+        Long plantId = selectedPlantId.getValue();
+        if (plantId != null) {
+            repository.deletePlant(plantId);
+            plantDeletedLiveData.setValue(true);
         }
     }
 

@@ -118,6 +118,11 @@ public class PlantRepository implements PlantRepositoryContract {
         writeExecutor.execute(() -> photoDao.deleteById(photoId));
     }
 
+    @Override
+    public void deletePlant(long plantId) {
+        writeExecutor.execute(() -> plantDao.deleteById(plantId));
+    }
+
     @NonNull
     private Plant mapPlant(@NonNull PlantEntity entity) {
         return new Plant(

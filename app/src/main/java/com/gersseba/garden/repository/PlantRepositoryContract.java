@@ -28,4 +28,6 @@ public interface PlantRepositoryContract {
             @NonNull String[] photoSummaries);
 
     void deletePhoto(long photoId);
+
+    void deletePlant(long plantId);
 }

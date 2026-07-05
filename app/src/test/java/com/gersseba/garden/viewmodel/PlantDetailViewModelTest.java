@@ -116,6 +116,17 @@ public class PlantDetailViewModelTest {
     }
 
     @Test
+    public void deletePlant_callsRepositoryAndSetsDeletedState() {
+        viewModel.init(42L);
+        viewModel.getPlantDeleted().observeForever(deleted -> {});
+
+        viewModel.deletePlant();
+
+        assertEquals(42L, repository.lastDeletedPlantId);
+        assertEquals(true, viewModel.getPlantDeleted().getValue());
+    }
+
+    @Test
     public void getCareTasks_returnsMockedDefaultTasks() {
         List<PlantCareTask> tasks = viewModel.getCareTasks().getValue();
 
@@ -129,6 +140,7 @@ public class PlantDetailViewModelTest {
         private final MutableLiveData<Plant> plantLiveData = new MutableLiveData<>();
         private final MutableLiveData<List<PlantPhoto>> photosLiveData = new MutableLiveData<>(Collections.emptyList());
         long lastDeletedPhotoId = -1L;
+        long lastDeletedPlantId = -1L;
 
         void setPlant(Plant plant) {
             plantLiveData.setValue(plant);
@@ -170,6 +182,11 @@ public class PlantDetailViewModelTest {
         @Override
         public void deletePhoto(long photoId) {
             lastDeletedPhotoId = photoId;
+        }
+
+        @Override
+        public void deletePlant(long plantId) {
+            lastDeletedPlantId = plantId;
         }
     }
 }

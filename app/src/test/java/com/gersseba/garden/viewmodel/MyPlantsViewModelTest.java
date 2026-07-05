@@ -126,5 +126,10 @@ public class MyPlantsViewModelTest {
         public void deletePhoto(long photoId) {
             // Not used in MyPlantsViewModel tests.
         }
+
+        @Override
+        public void deletePlant(long plantId) {
+            // Not used in MyPlantsViewModel tests.
+        }
     }
 }
