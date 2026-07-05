@@ -12,6 +12,24 @@
     <string name="my_plants_empty_message">No plants yet. Tap + to add one.</string>
     <string name="my_plants_fab_description">Add a plant</string>
     <string name="my_plants_photo_description">Plant photo placeholder</string>
+    <string-array name="my_plants_catalog_entries">
+        <item>Monstera deliciosa</item>
+        <item>Snake plant</item>
+        <item>Cherry tomato</item>
+        <item>Pothos</item>
+        <item>Peace lily</item>
+        <item>Fiddle-leaf fig</item>
+        <item>Aloe vera</item>
+        <item>Cactus</item>
+        <item>Lavender</item>
+        <item>Basil</item>
+    </string-array>
+
+    <string name="default_plant_family">Unknown family</string>
+    <string name="default_sun_exposure">Bright indirect light</string>
+    <string name="default_watering_frequency">Every 7–10 days</string>
+    <string name="default_soil_type">Well-draining potting mix</string>
+    <string name="default_plant_notes">Initial healthy state. Monitor soil moisture daily.</string>
 
     <string name="care_plan_screen_title">Care Plan</string>
     <string name="care_plan_mock_description">Mocked monthly care plan for the upcoming planning experience.</string>

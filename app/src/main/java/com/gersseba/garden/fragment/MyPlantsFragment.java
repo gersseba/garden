@@ -15,11 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.gersseba.garden.R;
 import com.gersseba.garden.adapter.PlantCardAdapter;
 import com.gersseba.garden.databinding.FragmentMyPlantsBinding;
-import com.gersseba.garden.model.MockPlant;
+import com.gersseba.garden.model.Plant;
 import com.gersseba.garden.viewmodel.MyPlantsViewModel;
 
 /**
- * Displays the mocked My Plants list with a floating action button to add plants.
+ * Displays the persisted My Plants list with a floating action button to add plants.
  * Tapping a plant card navigates to the plant detail screen.
  */
 public class MyPlantsFragment extends Fragment {
@@ -63,10 +63,9 @@ public class MyPlantsFragment extends Fragment {
         });
     }
 
-    private void onPlantClicked(@NonNull MockPlant plant) {
+    private void onPlantClicked(@NonNull Plant plant) {
         Bundle args = new Bundle();
         args.putLong("plantId", plant.id);
-        args.putString("plantName", plant.name);
         Navigation.findNavController(requireView())
                 .navigate(R.id.action_myPlantsFragment_to_plantDetailFragment, args);
     }

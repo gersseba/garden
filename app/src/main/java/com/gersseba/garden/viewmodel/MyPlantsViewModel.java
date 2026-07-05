@@ -1,69 +1,110 @@
 package com.gersseba.garden.viewmodel;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.AndroidViewModel;
 
-import com.gersseba.garden.model.MockPlant;
+import com.gersseba.garden.R;
+import com.gersseba.garden.model.Plant;
+import com.gersseba.garden.repository.PlantRepository;
+import com.gersseba.garden.repository.PlantRepositoryContract;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 /**
- * Holds the mocked My Plants list state and survives configuration changes.
- * All data is in-memory; Room persistence will replace this in a later ticket.
+ * Holds persisted My Plants list state and survives configuration changes.
  */
-public class MyPlantsViewModel extends ViewModel {
+public class MyPlantsViewModel extends AndroidViewModel {
 
-    /** Full catalog of mock plants that can be added to the list. */
-    private static final List<String> MOCK_CATALOG = Arrays.asList(
-            "Monstera deliciosa",
-            "Snake plant",
-            "Cherry tomato",
-            "Pothos",
-            "Peace lily",
-            "Fiddle-leaf fig",
-            "Aloe vera",
-            "Cactus",
-            "Lavender",
-            "Basil"
-    );
+    private final PlantRepositoryContract repository;
+    private final List<String> plantCatalog;
+    private final Random random;
+    private final String defaultPlantFamily;
+    private final String defaultSunExposure;
+    private final String defaultWateringFrequency;
+    private final String defaultSoilType;
+    private final boolean defaultIsIndoor;
+    private final String defaultNotes;
+    private final String[] defaultPhotoSummaries;
+    private final int[] defaultPhotoDrawables;
 
-    private final MutableLiveData<List<MockPlant>> plants = new MutableLiveData<>(new ArrayList<>());
-    private long nextId = 1;
-    private final Random random = new Random();
+    public MyPlantsViewModel(@NonNull Application application) {
+        this(
+                application,
+                new PlantRepository(application),
+                List.of(application.getResources().getStringArray(R.array.my_plants_catalog_entries)),
+                new Random(),
+                application.getString(R.string.default_plant_family),
+                application.getString(R.string.default_sun_exposure),
+                application.getString(R.string.default_watering_frequency),
+                application.getString(R.string.default_soil_type),
+                true,
+                application.getString(R.string.default_plant_notes),
+                new int[] {
+                        R.drawable.plant_placeholder,
+                        R.drawable.plant_placeholder_b,
+                        R.drawable.plant_placeholder_c
+                },
+                new String[] {
+                        application.getString(R.string.mock_photo_summary_1),
+                        application.getString(R.string.mock_photo_summary_2),
+                        application.getString(R.string.mock_photo_summary_3)
+                });
+    }
+
+    MyPlantsViewModel(
+            @NonNull Application application,
+            @NonNull PlantRepositoryContract repository,
+            @NonNull List<String> plantCatalog,
+            @NonNull Random random,
+            @NonNull String defaultPlantFamily,
+            @NonNull String default_sun_exposure,
+            @NonNull String defaultWateringFrequency,
+            @NonNull String defaultSoilType,
+            boolean defaultIsIndoor,
+            @NonNull String defaultNotes,
+            @NonNull int[] defaultPhotoDrawables,
+            @NonNull String[] defaultPhotoSummaries) {
+        super(application);
+        this.repository = repository;
+        this.plantCatalog = plantCatalog;
+        this.random = random;
+        this.defaultPlantFamily = defaultPlantFamily;
+        this.defaultSunExposure = default_sun_exposure;
+        this.defaultWateringFrequency = defaultWateringFrequency;
+        this.defaultSoilType = defaultSoilType;
+        this.defaultIsIndoor = defaultIsIndoor;
+        this.defaultNotes = defaultNotes;
+        this.defaultPhotoSummaries = defaultPhotoSummaries;
+        this.defaultPhotoDrawables = defaultPhotoDrawables;
+    }
 
     /** Observable list of plants shown in the My Plants screen. */
-    public LiveData<List<MockPlant>> getPlants() {
-        return plants;
+    public LiveData<List<Plant>> getPlants() {
+        return repository.observePlants();
     }
 
     /**
-     * Appends a randomly selected plant from the mock catalog to the list.
-     * Duplicate entries are allowed to keep the implementation simple.
+     * Appends a randomly selected plant from the catalog to persistence.
      */
     public void addRandomPlant() {
-        String name = MOCK_CATALOG.get(random.nextInt(MOCK_CATALOG.size()));
-        List<MockPlant> current = new ArrayList<>(currentList());
-        current.add(new MockPlant(nextId++, name));
-        plants.setValue(current);
-    }
-
-    /** Returns the plant with the given id, or {@code null} if not found. */
-    public MockPlant findPlantById(long id) {
-        for (MockPlant plant : currentList()) {
-            if (plant.id == id) {
-                return plant;
-            }
+        if (plantCatalog.isEmpty()) {
+            return;
         }
-        return null;
-    }
-
-    private List<MockPlant> currentList() {
-        List<MockPlant> list = plants.getValue();
-        return list != null ? list : new ArrayList<>();
+        String name = plantCatalog.get(random.nextInt(plantCatalog.size()));
+        repository.addPlant(
+                name,
+                name,
+                defaultPlantFamily,
+                defaultSunExposure,
+                defaultWateringFrequency,
+                defaultSoilType,
+                defaultIsIndoor,
+                defaultNotes,
+                defaultPhotoDrawables,
+                defaultPhotoSummaries);
     }
 }
-

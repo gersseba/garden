@@ -45,12 +45,10 @@ public class PlantDetailFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(PlantDetailViewModel.class);
 
         long plantId = 0L;
-        String plantName = "";
         if (getArguments() != null) {
             plantId = getArguments().getLong("plantId", 0L);
-            plantName = getArguments().getString("plantName", "");
         }
-        viewModel.init(plantId, plantName);
+        viewModel.init(plantId);
 
         setUpPhotoGallery();
         setUpCareTaskList();
@@ -87,11 +85,11 @@ public class PlantDetailFragment extends Fragment {
     }
 
     private void bindGeneralInfo(@NonNull PlantDetailInfo info) {
-        binding.generalInfoSpeciesValue.setText(info.scientificNameRes);
-        binding.generalInfoFamilyValue.setText(info.plantFamilyRes);
-        binding.generalInfoLightValue.setText(info.sunExposureRes);
-        binding.generalInfoWateringValue.setText(info.wateringFrequencyRes);
-        binding.generalInfoSoilValue.setText(info.soilTypeRes);
+        binding.generalInfoSpeciesValue.setText(info.scientificName);
+        binding.generalInfoFamilyValue.setText(info.plantFamily);
+        binding.generalInfoLightValue.setText(info.sunExposure);
+        binding.generalInfoWateringValue.setText(info.wateringFrequency);
+        binding.generalInfoSoilValue.setText(info.soilType);
     }
 
     @Override

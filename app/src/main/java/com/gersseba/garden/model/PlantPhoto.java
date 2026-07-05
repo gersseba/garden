@@ -1,28 +1,34 @@
 package com.gersseba.garden.model;
 
 import androidx.annotation.DrawableRes;
-import androidx.annotation.StringRes;
+import androidx.annotation.NonNull;
+
+import java.time.LocalDateTime;
 
 /**
- * Presentation model for a single plant photo shown in the detail screen gallery.
- *
- * Forward-compatible:
- *   - {@code drawableRes} maps to {@code PhotoEntity.photoPath} (replace with a file path or URI).
- *   - {@code aiSummaryRes} maps to {@code PhotoEntity.healthAnalysis} (replace with a String).
+ * Presentation model for a single persisted plant photo shown in the detail screen gallery.
  */
 public class PlantPhoto {
 
-    /** Placeholder drawable resource; replace with a real photo URI when Room is wired. */
     @DrawableRes
-    public final int drawableRes;
+    public final int imageResId;
 
-    /** Mocked AI-generated summary resource ID; replace with {@code PhotoEntity.healthAnalysis}. */
-    @StringRes
-    public final int aiSummaryRes;
+    @NonNull
+    public final String photoPath;
 
-    public PlantPhoto(@DrawableRes int drawableRes, @StringRes int aiSummaryRes) {
-        this.drawableRes = drawableRes;
-        this.aiSummaryRes = aiSummaryRes;
+    @NonNull
+    public final LocalDateTime capturedAt;
+
+    @NonNull public final String aiSummary;
+
+    public PlantPhoto(
+            @DrawableRes int imageResId,
+            @NonNull String photoPath,
+            @NonNull LocalDateTime capturedAt,
+            @NonNull String aiSummary) {
+        this.imageResId = imageResId;
+        this.photoPath = photoPath;
+        this.capturedAt = capturedAt;
+        this.aiSummary = aiSummary;
     }
 }
-

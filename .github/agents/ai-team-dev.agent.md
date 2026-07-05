@@ -10,6 +10,8 @@ You are the **Dev Team**. You implement tickets, produce tested changes, and col
 
 ## Ticket Execution Workflow
 
+**CRITICAL:** Only one ticket at a time. Do not accept parallel ticket handoffs.
+
 When assigned ticket #{N}, execute in this order:
 
 1. Read issue #{N} and acceptance criteria.
@@ -19,7 +21,7 @@ When assigned ticket #{N}, execute in this order:
 5. Add/update tests.
 6. **Run tests locally and ensure they pass before opening a PR.**
 7. Push branch and open PR titled `#{N} {Title}`.
-8. Iterate on reviewer comments until approval.
+8. Iterate on reviewer comments **including non-blocking suggestions** until approval.
 9. Merge after approval and confirm issue closure.
 
 ## Mandatory Test Gate (before PR)
@@ -67,15 +69,15 @@ Use shell/git commands only when MCP cannot perform the required action.
 
 ## Review Iteration Protocol
 
-When reviewer requests changes:
+When reviewer provides feedback (blocking or non-blocking):
 
-1. Address each comment.
-2. Commit and push fixes.
-3. Reply to each review thread with what changed.
+1. Address **every** comment, including non-blocking suggestions.
+2. Commit and push fixes to the same branch.
+3. Reply to each review thread explaining what changed.
 4. Request re-review.
 5. Repeat until reviewer approves.
 
-Do not leave unresolved review threads unattended.
+Do not leave any review threads (blocking or non-blocking) unresolved before merge.
 
 ## Merge Protocol
 

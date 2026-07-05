@@ -1,13 +1,20 @@
 package com.gersseba.garden.viewmodel;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.Transformations;
 
 import com.gersseba.garden.R;
+import com.gersseba.garden.model.Plant;
 import com.gersseba.garden.model.PlantCareTask;
 import com.gersseba.garden.model.PlantDetailInfo;
 import com.gersseba.garden.model.PlantPhoto;
+import com.gersseba.garden.repository.PlantRepository;
+import com.gersseba.garden.repository.PlantRepositoryContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,32 +22,50 @@ import java.util.List;
 /**
  * ViewModel for the Plant Detail screen.
  *
- * Holds all mocked data for a selected plant and survives configuration changes.
- * Replace the {@code buildMocked*()} methods with repository calls when Room and
- * Gemini AI are wired up — the LiveData contracts and field names remain the same.
+ * Holds detail screen state for a selected plant loaded from persistence.
  */
-public class PlantDetailViewModel extends ViewModel {
+public class PlantDetailViewModel extends AndroidViewModel {
 
-    private final MutableLiveData<String> plantNameLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<PlantPhoto>> photosLiveData = new MutableLiveData<>();
-    private final MutableLiveData<PlantDetailInfo> generalInfoLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Long> selectedPlantId = new MutableLiveData<>();
+    private final LiveData<Plant> selectedPlantLiveData;
+    private final LiveData<String> plantNameLiveData;
+    private final LiveData<List<PlantPhoto>> photosLiveData;
+    private final LiveData<PlantDetailInfo> generalInfoLiveData;
     private final MutableLiveData<List<PlantCareTask>> careTasksLiveData = new MutableLiveData<>();
+
+    public PlantDetailViewModel(@NonNull Application application) {
+        this(application, new PlantRepository(application));
+    }
+
+    PlantDetailViewModel(@NonNull Application application,
+            @NonNull PlantRepositoryContract repository) {
+        super(application);
+        this.selectedPlantLiveData = Transformations.switchMap(
+                selectedPlantId,
+                repository::observePlant);
+        this.photosLiveData = Transformations.switchMap(
+                selectedPlantId,
+                repository::observePhotosForPlant);
+        this.plantNameLiveData = Transformations.map(selectedPlantLiveData,
+                plant -> plant != null ? plant.name : "");
+        this.generalInfoLiveData = Transformations.map(selectedPlantLiveData,
+                this::mapDetailInfo);
+
+        careTasksLiveData.setValue(buildMockedCareTasks());
+    }
 
     /**
      * Initialises the ViewModel with data for the given plant.
      * Safe to call on every {@code onViewCreated} — data is only populated once.
      *
-     * @param plantId   future Room primary key; unused by mocks but kept for forward-compatibility
-     * @param plantName display name passed via navigation argument
+     * @param plantId selected plant primary key.
      */
-    public void init(long plantId, String plantName) {
-        if (plantNameLiveData.getValue() != null) {
+    public void init(long plantId) {
+        Long current = selectedPlantId.getValue();
+        if (current != null && current == plantId) {
             return; // already initialised; skip on re-attach after rotation
         }
-        plantNameLiveData.setValue(plantName);
-        photosLiveData.setValue(buildMockedPhotos());
-        generalInfoLiveData.setValue(buildMockedGeneralInfo());
-        careTasksLiveData.setValue(buildMockedCareTasks());
+        selectedPlantId.setValue(plantId);
     }
 
     public LiveData<String> getPlantName() {
@@ -59,33 +84,19 @@ public class PlantDetailViewModel extends ViewModel {
         return careTasksLiveData;
     }
 
-    // -----------------------------------------------------------------------
-    // Mocked data builders — public for direct unit testing without LiveData
-    // -----------------------------------------------------------------------
-
-    /**
-     * Returns three mocked plant photos with AI-generated summaries.
-     * Replace with a repository query (e.g. {@code photoRepository.getPhotosForPlant(plantId)}).
-     */
-    public List<PlantPhoto> buildMockedPhotos() {
-        List<PlantPhoto> photos = new ArrayList<>();
-        photos.add(new PlantPhoto(R.drawable.plant_placeholder,   R.string.mock_photo_summary_1));
-        photos.add(new PlantPhoto(R.drawable.plant_placeholder_b, R.string.mock_photo_summary_2));
-        photos.add(new PlantPhoto(R.drawable.plant_placeholder_c, R.string.mock_photo_summary_3));
-        return photos;
-    }
-
-    /**
-     * Returns mocked general plant info.
-     * Replace with {@code PlantEntity} fields from the Room database.
-     */
-    public PlantDetailInfo buildMockedGeneralInfo() {
+    private PlantDetailInfo mapDetailInfo(Plant plant) {
+        if (plant == null) {
+            return new PlantDetailInfo("", "", "", "", "", "", false, "");
+        }
         return new PlantDetailInfo(
-                R.string.mock_scientific_name,
-                R.string.mock_plant_family,
-                R.string.mock_sun_exposure,
-                R.string.mock_watering_frequency,
-                R.string.mock_soil_type);
+                plant.scientificName,
+                plant.plantFamily,
+                plant.dateAdded.toString(),
+                plant.sunExposure,
+                plant.wateringFrequency,
+                plant.soilType,
+                plant.isIndoor,
+                plant.notes);
     }
 
     /**
@@ -109,4 +120,3 @@ public class PlantDetailViewModel extends ViewModel {
         return tasks;
     }
 }
-

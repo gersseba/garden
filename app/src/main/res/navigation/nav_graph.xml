@@ -40,10 +40,6 @@
         <argument
             android:name="plantId"
             app:argType="long" />
-        <argument
-            android:name="plantName"
-            app:argType="string"
-            android:defaultValue="" />
     </fragment>
 
     <fragment
