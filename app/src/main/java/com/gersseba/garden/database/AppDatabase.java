@@ -8,12 +8,14 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import com.gersseba.garden.database.dao.LocalizedTextDao;
 import com.gersseba.garden.database.dao.PhotoDao;
 import com.gersseba.garden.database.dao.PlantDao;
+import com.gersseba.garden.database.entity.LocalizedTextEntity;
 import com.gersseba.garden.database.entity.PhotoEntity;
 import com.gersseba.garden.database.entity.PlantEntity;
 
-@Database(entities = {PlantEntity.class, PhotoEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {PlantEntity.class, PhotoEntity.class, LocalizedTextEntity.class}, version = 2, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -22,6 +24,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract PlantDao plantDao();
 
     public abstract PhotoDao photoDao();
+
+    public abstract LocalizedTextDao localizedTextDao();
 
     @NonNull
     public static AppDatabase getInstance(@NonNull Context context) {
