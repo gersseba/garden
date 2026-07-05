@@ -18,6 +18,15 @@ import java.util.List;
 public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapter.PhotoViewHolder> {
 
     private List<PlantPhoto> photos = Collections.emptyList();
+    private OnPhotoClickListener onPhotoClickListener;
+
+    public interface OnPhotoClickListener {
+        void onPhotoClick(int position);
+    }
+
+    public void setOnPhotoClickListener(OnPhotoClickListener listener) {
+        this.onPhotoClickListener = listener;
+    }
 
     /** Replaces the current photo list and refreshes the RecyclerView. */
     public void submitList(@NonNull List<PlantPhoto> newPhotos) {
@@ -35,7 +44,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position) {
-        holder.bind(photos.get(position));
+        holder.bind(photos.get(position), position, onPhotoClickListener);
     }
 
     @Override
@@ -52,9 +61,13 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
             this.binding = binding;
         }
 
-        void bind(@NonNull PlantPhoto photo) {
+        void bind(@NonNull PlantPhoto photo, int position, OnPhotoClickListener listener) {
             binding.photoImage.setImageResource(photo.imageResId);
-            binding.photoAiSummary.setText(photo.aiSummary);
+            binding.getRoot().setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onPhotoClick(position);
+                }
+            });
         }
     }
 }

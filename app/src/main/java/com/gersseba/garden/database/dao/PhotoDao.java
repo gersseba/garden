@@ -17,5 +17,7 @@ public interface PhotoDao {
 
     @Insert
     void insertAll(List<PhotoEntity> photos);
-}
 
+    @Query("DELETE FROM photos WHERE id = :photoId")
+    void deleteById(long photoId);
+}

@@ -9,8 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.gersseba.garden.R;
 import com.gersseba.garden.adapter.PhotoGalleryAdapter;
 import com.gersseba.garden.adapter.PlantCareTaskAdapter;
 import com.gersseba.garden.databinding.FragmentPlantDetailBinding;
@@ -42,7 +44,7 @@ public class PlantDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(PlantDetailViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(PlantDetailViewModel.class);
 
         long plantId = 0L;
         if (getArguments() != null) {
@@ -57,6 +59,12 @@ public class PlantDetailFragment extends Fragment {
 
     private void setUpPhotoGallery() {
         photoAdapter = new PhotoGalleryAdapter();
+        photoAdapter.setOnPhotoClickListener(position -> {
+            Bundle args = new Bundle();
+            args.putInt("startPosition", position);
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_plantDetailFragment_to_fullscreenGalleryFragment, args);
+        });
         binding.photoGalleryRecyclerView.setLayoutManager(
                 new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.photoGalleryRecyclerView.setAdapter(photoAdapter);

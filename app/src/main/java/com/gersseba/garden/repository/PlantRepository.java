@@ -72,7 +72,7 @@ public class PlantRepository implements PlantRepositoryContract {
                 return mapped;
             }
             for (PhotoEntity entity : entities) {
-                mapped.add(new PlantPhoto(entity.imageResId, entity.photoPath, entity.capturedAt, entity.healthAnalysis));
+                mapped.add(new PlantPhoto(entity.id, entity.imageResId, entity.photoPath, entity.capturedAt, entity.healthAnalysis));
             }
             return mapped;
         });
@@ -111,6 +111,11 @@ public class PlantRepository implements PlantRepositoryContract {
                 photoDao.insertAll(photos);
             }
         });
+    }
+
+    @Override
+    public void deletePhoto(long photoId) {
+        writeExecutor.execute(() -> photoDao.deleteById(photoId));
     }
 
     @NonNull

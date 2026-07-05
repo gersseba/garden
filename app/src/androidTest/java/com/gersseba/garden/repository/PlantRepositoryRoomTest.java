@@ -76,6 +76,19 @@ public class PlantRepositoryRoomTest {
         assertEquals("Healthy", photos.get(1).aiSummary);
     }
 
+    @Test
+    public void deletePhoto_removesRecordFromPersistence() throws InterruptedException {
+        repository.addPlant("Test", "Test", "Test", "Test", "Test", "Test", true, "", new int[]{1}, new String[]{""});
+        Plant plant = awaitValue(repository.observePlants()).get(0);
+        List<PlantPhoto> photosBefore = awaitValue(repository.observePhotosForPlant(plant.id));
+        long photoIdToDelete = photosBefore.get(0).id;
+
+        repository.deletePhoto(photoIdToDelete);
+
+        List<PlantPhoto> photosAfter = awaitValue(repository.observePhotosForPlant(plant.id));
+        assertEquals(0, photosAfter.size());
+    }
+
     private static <T> T awaitValue(LiveData<T> liveData) throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         List<T> values = new ArrayList<>();
