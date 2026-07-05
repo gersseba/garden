@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -54,6 +55,7 @@ public class PlantDetailFragment extends Fragment {
 
         setUpPhotoGallery();
         setUpCareTaskList();
+        setUpDeleteAction();
         observeViewModel();
     }
 
@@ -78,6 +80,19 @@ public class PlantDetailFragment extends Fragment {
         binding.careTasksRecyclerView.setAdapter(careTaskAdapter);
     }
 
+    private void setUpDeleteAction() {
+        binding.deletePlantButton.setOnClickListener(v -> showDeleteConfirmationDialog());
+    }
+
+    private void showDeleteConfirmationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.delete_plant_action)
+                .setMessage(R.string.delete_plant_confirmation)
+                .setPositiveButton(R.string.delete_plant_positive, (dialog, which) -> viewModel.deletePlant())
+                .setNegativeButton(R.string.delete_plant_negative, null)
+                .show();
+    }
+
     private void observeViewModel() {
         viewModel.getPlantName().observe(getViewLifecycleOwner(), name ->
                 binding.plantDetailName.setText(name));
@@ -90,6 +105,12 @@ public class PlantDetailFragment extends Fragment {
 
         viewModel.getCareTasks().observe(getViewLifecycleOwner(),
                 tasks -> careTaskAdapter.submitList(tasks));
+
+        viewModel.getPlantDeleted().observe(getViewLifecycleOwner(), deleted -> {
+            if (deleted) {
+                NavHostFragment.findNavController(this).popBackStack();
+            }
+        });
     }
 
     private void bindGeneralInfo(@NonNull PlantDetailInfo info) {

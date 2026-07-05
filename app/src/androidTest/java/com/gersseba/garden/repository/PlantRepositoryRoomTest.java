@@ -89,6 +89,21 @@ public class PlantRepositoryRoomTest {
         assertEquals(0, photosAfter.size());
     }
 
+    @Test
+    public void deletePlant_removesPlantAndCascadesToPhotos() throws InterruptedException {
+        repository.addPlant("DeleteMe", "Del", "Del", "Del", "Del", "Del", true, "", new int[]{1, 2}, new String[]{"P1", "P2"});
+        List<Plant> plantsBefore = awaitValue(repository.observePlants());
+        Plant plantToDelete = plantsBefore.get(0);
+
+        repository.deletePlant(plantToDelete.id);
+
+        List<Plant> plantsAfter = awaitValue(repository.observePlants());
+        assertEquals(0, plantsAfter.size());
+
+        List<PlantPhoto> photosAfter = awaitValue(repository.observePhotosForPlant(plantToDelete.id));
+        assertEquals(0, photosAfter.size());
+    }
+
     private static <T> T awaitValue(LiveData<T> liveData) throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         List<T> values = new ArrayList<>();

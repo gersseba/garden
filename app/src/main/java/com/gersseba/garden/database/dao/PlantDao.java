@@ -2,6 +2,7 @@ package com.gersseba.garden.database.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -20,5 +21,10 @@ public interface PlantDao {
 
     @Insert
     long insert(PlantEntity plant);
-}
 
+    @Delete
+    void delete(PlantEntity plant);
+
+    @Query("DELETE FROM plants WHERE id = :plantId")
+    void deleteById(long plantId);
+}
