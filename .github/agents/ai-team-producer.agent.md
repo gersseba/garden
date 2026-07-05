@@ -75,14 +75,12 @@ After all selected work is done:
 
 ## GitHub MCP-First Policy
 
-Prefer GitHub MCP tools over shell/git commands for orchestration tasks:
+Prefer GitHub MCP APIs and repository-built search/file tools for orchestration tasks and codebase discovery:
 
-- Issues: `github/issue_write`, `github/issue_read`, `github/list_issues`
-- PRs: `github/create_pull_request`, `github/pull_request_read`, `github/update_pull_request`
-- Reviews: `github/pull_request_review_write`, `github/add_comment_to_pending_review`
-- Merge: `github/merge_pull_request`
+- Use MCP APIs for GH objects and actions: `github/issue_write`, `github/issue_read`, `github/list_issues`, `github/create_pull_request`, `github/pull_request_read`, `github/update_pull_request`, `github/pull_request_review_write`, `github/add_comment_to_pending_review`, and `github/merge_pull_request`.
+- For searching or reading code in the workspace, prefer `file_search`, `grep_search`, `semantic_search`, and `read_file` over running shell `grep` or other CLI searches.
 
-Use terminal/git CLI only when there is no suitable MCP action.
+Use the terminal/CLI (`run_in_terminal`) only when an MCP or repository tool cannot accomplish the task.
 
 ## Ticket Quality Standard
 

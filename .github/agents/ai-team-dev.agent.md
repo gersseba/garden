@@ -46,15 +46,12 @@ Include test evidence in PR body:
 
 ## GitHub MCP-First Policy
 
-Prefer GitHub MCP tools for ticket workflow actions:
+Prefer GitHub MCP and repository-built tools for ticket workflow actions and codebase queries. Use the MCP APIs and the repository search/file tools in priority order:
 
-- Read issue/PR: `github/issue_read`, `github/pull_request_read`
-- Create/update branch content remotely when appropriate: `github/push_files`, `github/create_or_update_file`
-- Open/update PR: `github/create_pull_request`, `github/update_pull_request`
-- Merge: `github/merge_pull_request`
-- Reply on review threads: `github/add_reply_to_pull_request_comment`
+- For GH objects: use `github/issue_read`, `github/pull_request_read`, `github/create_pull_request`, `github/update_pull_request`, `github/merge_pull_request`, `github/add_reply_to_pull_request_comment`, `github/push_files`, and `github/create_or_update_file`.
+- For searching and reading code or files in the workspace, prefer `file_search`, `grep_search`, `semantic_search`, and `read_file` over running shell commands like `grep` via `run_in_terminal`.
 
-Use shell/git commands only when MCP cannot perform the required action.
+Use shell/git commands or `run_in_terminal` only when there is no equivalent MCP or repository tool available to perform the action.
 
 ## Commit and PR Conventions
 
