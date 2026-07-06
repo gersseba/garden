@@ -23,8 +23,16 @@ public class LocaleManager {
 	private final CountDownLatch initLatch;
 	private final Set<Locale> supportedLocales = new HashSet<>(Arrays.asList(Locale.ENGLISH, Locale.GERMAN));
 
+	// Shared application-scoped executor to avoid creating per-instance threads that may leak
+	private static final ExecutorService SHARED_EXECUTOR = Executors.newSingleThreadExecutor(r -> {
+		Thread t = new Thread(r);
+		t.setName("LocaleManager-SHARED");
+		t.setDaemon(true);
+		return t;
+	});
+
 	public LocaleManager(SettingsDataStore settings) {
-		this(settings, null, Executors.newSingleThreadExecutor());
+		this(settings, null, SHARED_EXECUTOR);
 	}
 
 	public LocaleManager(SettingsDataStore settings, CountDownLatch initLatch, ExecutorService executor) {
@@ -84,3 +92,4 @@ public class LocaleManager {
 		return locale != null && supportedLocales.contains(locale);
 	}
 }
+
