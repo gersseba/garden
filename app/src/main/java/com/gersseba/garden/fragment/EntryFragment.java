@@ -30,6 +30,8 @@ public class EntryFragment extends Fragment {
                 .navigate(R.id.action_entryFragment_to_myPlantsFragment));
         binding.carePlanButton.setOnClickListener(buttonView -> NavHostFragment.findNavController(this)
                 .navigate(R.id.action_entryFragment_to_carePlanFragment));
+        binding.settingsButton.setOnClickListener(buttonView -> NavHostFragment.findNavController(this)
+                .navigate(R.id.action_entryFragment_to_settingsFragment));
     }
 
     @Override

@@ -98,6 +98,22 @@ public class FullscreenGalleryFragment extends Fragment {
             adapter.submitList(photos);
             updatePhotoInfo(binding.fullscreenViewPager.getCurrentItem());
         });
+
+        // Use a single observer for the current photo's summary
+        viewModel.getCurrentPhotoSummary().observe(getViewLifecycleOwner(), dbSummary -> {
+            List<PlantPhoto> photos = viewModel.getPhotos().getValue();
+            int currentPos = binding.fullscreenViewPager.getCurrentItem();
+            if (photos == null || currentPos < 0 || currentPos >= photos.size()) return;
+
+            PlantPhoto photo = photos.get(currentPos);
+            String summary = dbSummary != null && !dbSummary.isEmpty() ? dbSummary : photo.aiSummary;
+            if (summary != null && !summary.isEmpty()) {
+                binding.fullscreenSummaryText.setVisibility(View.VISIBLE);
+                binding.fullscreenSummaryText.setText(summary);
+            } else {
+                binding.fullscreenSummaryText.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void updatePhotoInfo(int position) {
@@ -109,16 +125,8 @@ public class FullscreenGalleryFragment extends Fragment {
         PlantPhoto photo = photos.get(position);
         binding.fullscreenDateText.setText(photo.capturedAt.format(DATE_FORMATTER));
 
-        // Prefer DB localized ai summary when present
-        viewModel.getPhotoSummaryLive(photo.id).observe(getViewLifecycleOwner(), dbSummary -> {
-            String summary = dbSummary != null && !dbSummary.isEmpty() ? dbSummary : photo.aiSummary;
-            if (summary != null && !summary.isEmpty()) {
-                binding.fullscreenSummaryText.setVisibility(View.VISIBLE);
-                binding.fullscreenSummaryText.setText(summary);
-            } else {
-                binding.fullscreenSummaryText.setVisibility(View.GONE);
-            }
-        });
+        // Let the ViewModel know which photo summary we want to observe
+        viewModel.setSelectedPhotoId(photo.id);
     }
 
     @Override

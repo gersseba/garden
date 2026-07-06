@@ -49,8 +49,13 @@ dependencies {
     implementation(libs.viewpager2)
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
+    // Jetpack DataStore for preferences-backed settings
+    implementation(libs.datastore.preferences)
+    // Kotlin coroutines (used by DataStore internals and our Kotlin helper)
+    implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.junit)
     testImplementation(libs.arch.core.testing)
+    testImplementation(libs.mockito.core)
     androidTestImplementation(libs.arch.core.testing)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)

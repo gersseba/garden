@@ -52,7 +52,6 @@ sequenceDiagram
     participant User
     participant Producer
     participant Dev
-    participant Reviewer
     participant GitHub
 
     User->>Producer: Describe features
@@ -64,18 +63,19 @@ sequenceDiagram
         Producer->>Dev: Hand off ticket #{N}
         Dev->>GitHub: branch + implement + PR
         Dev->>Producer: PR opened
-
-        Producer->>Reviewer: Hand off PR #{N}
-        Reviewer->>GitHub: Review + REQUEST_CHANGES or APPROVE
+        
+        Producer->>GitHub: Request Copilot review for PR #{N}
+        Producer->>User: Report PR creation & wait for review
+        
+        User->>Producer: "check PR review"
 
         alt Changes requested
             Producer->>Dev: Address comments
             Dev->>GitHub: Push fixes, reply to comments
-            Producer->>Reviewer: Re-review
-            Reviewer->>GitHub: Resolve threads + APPROVE
+            Producer->>GitHub: Request re-review
         end
 
-        Producer->>Dev: Merge approved PR
+        Producer->>GitHub: Merge approved PR
         Dev->>GitHub: git merge --no-ff, delete branch
     end
 
@@ -125,7 +125,7 @@ Every ticket the Producer creates follows this structure:
 ## Definition of Done
 - [ ] Branch `feature/{N}-kebab-title` pushed
 - [ ] PR opened as `#{N} {Title}`
-- [ ] Code Reviewer approved
+- [ ] GitHub review approved
 - [ ] PR merged to main with `--no-ff`
 - [ ] This issue auto-closed
 ```
@@ -134,7 +134,7 @@ Every ticket the Producer creates follows this structure:
 
 ## Code Review Standards
 
-The Code Reviewer checks five categories in priority order:
+Code reviews (native GitHub reviews, often assisted by Copilot) should check five categories in priority order:
 
 ### Blocking (must fix before merge)
 
@@ -151,29 +151,19 @@ The Code Reviewer checks five categories in priority order:
 |----------|-----------|
 | **Documentation** | Javadoc on public methods, inline comments for complex logic |
 
-### Review Comment Format
-
-```
-[Category] — [Issue] and [why it matters].
-
-Suggested fix: [concrete, actionable fix]
-
-Reference: [docs/project-documentation/... or .github/instructions/...]
-```
-
 ---
 
 ## Iteration Protocol
 
-After the reviewer submits `REQUEST_CHANGES`:
+After a GitHub review submits `REQUEST_CHANGES`:
 
 1. **Dev reads all comments** — understands every thread
 2. **Dev fixes issues** — commits to the same branch: `fix: address review comments (Fixes #N)`
 3. **Dev pushes** — `git push origin feature/{N}-kebab-title`
 4. **Dev replies to every comment** — references the commit hash where the fix lives
-5. **Reviewer re-examines** — reads new commits, verifies fixes
-6. **Reviewer resolves threads** — one by one as each fix is accepted
-7. **Reviewer approves** — when all blocking threads resolved
+5. **Producer/Dev request re-review** — to notify reviewers of updates
+6. **PR state re-evaluated** — resolving threads one by one
+7. **Approval** — when all blocking threads resolved
 
 ---
 
@@ -181,9 +171,8 @@ After the reviewer submits `REQUEST_CHANGES`:
 
 | Agent | File | Role in Workflow |
 |-------|------|-----------------|
-| **Producer (Remy)** | `.github/agents/ai-team-producer.agent.md` | Creates tickets, presents plan, waits for "go", orchestrates handoffs, confirms closure |
+| **Producer (Remy)** | `.github/agents/ai-team-producer.agent.md` | Creates tickets, presents plan, waits for "go", orchestrates handoffs, requests GitHub reviews, confirms closure |
 | **Dev Team (Nova/Sage/Milo)** | `.github/agents/ai-team-dev.agent.md` | Reads issue, creates branch, implements, opens PR, iterates on review, merges |
-| **Code Reviewer** | `.github/agents/code-reviewer.agent.md` | Reviews PR against standards, provides structured feedback, approves when ready |
 
 Each agent definition is **self-contained** — it includes the full workflow that agent needs to execute its role without needing to reference external files.
 

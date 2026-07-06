@@ -35,6 +35,8 @@ public class PlantDetailViewModel extends AndroidViewModel {
     private final LiveData<PlantDetailInfo> generalInfoLiveData;
     private final LiveData<String> generalInfoTextLiveData;
     private final LocalizedTextRepository localizedTextRepository;
+    private final MutableLiveData<Long> selectedPhotoId = new MutableLiveData<>();
+    private final LiveData<String> photoSummaryLiveData;
     // Locale manager is created lazily; visible for tests via constructor injection
     private final com.gersseba.garden.i18n.LocaleManager localeManager;
     private final MutableLiveData<List<PlantCareTask>> careTasksLiveData = new MutableLiveData<>();
@@ -71,7 +73,7 @@ public class PlantDetailViewModel extends AndroidViewModel {
         if (localeManager == null) {
             com.gersseba.garden.i18n.SettingsDataStoreImpl store = null;
             try {
-                store = com.gersseba.garden.i18n.SettingsDataStoreImpl.create(application);
+                store = com.gersseba.garden.i18n.SettingsDataStoreImpl.getInstance(application);
             } catch (Exception ignored) {
                 // tests may not provide DataStore; localeManager will be null and fallback to Locale.getDefault()
             }
@@ -80,6 +82,12 @@ public class PlantDetailViewModel extends AndroidViewModel {
             this.localeManager = localeManager;
         }
 
+        this.photoSummaryLiveData = Transformations.switchMap(selectedPhotoId, photoId -> {
+            if (photoId == null || this.localizedTextRepository == null) {
+                return new MutableLiveData<>(null);
+            }
+            return this.localizedTextRepository.getLocalizedTextLive("photo", photoId, "ai_summary", determineLocale());
+        });
         this.selectedPlantLiveData = Transformations.switchMap(
                 selectedPlantId,
                 repository::observePlant);
@@ -129,6 +137,20 @@ public class PlantDetailViewModel extends AndroidViewModel {
 
     public LiveData<String> getGeneralInfoText() {
         return generalInfoTextLiveData;
+    }
+
+    /**
+     * Sets the currently viewed photo ID to update the localized summary.
+     */
+    public void setSelectedPhotoId(long photoId) {
+        selectedPhotoId.setValue(photoId);
+    }
+
+    /**
+     * Returns the localized AI summary for the currently selected photo.
+     */
+    public LiveData<String> getCurrentPhotoSummary() {
+        return photoSummaryLiveData;
     }
 
     /**
