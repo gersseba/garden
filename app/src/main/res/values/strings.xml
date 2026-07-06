@@ -35,6 +35,8 @@
     <string name="care_plan_screen_title">Care Plan</string>
     <string name="settings_screen_title">Settings</string>
     <string name="settings_screen_description">Choose your preferred language for the app.</string>
+    <string name="language_en">English</string>
+    <string name="language_de">Deutsch</string>
     <string name="care_plan_mock_description">Mocked monthly care plan for the upcoming planning experience.</string>
     <string name="care_plan_mock_items">• Week 1: Check soil moisture\n• Week 2: Rotate indoor pots\n• Week 3: Inspect leaves for pests\n• Week 4: Refresh mulch</string>
     <string name="care_plan_this_month_label">This month\'s tasks</string>

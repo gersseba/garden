@@ -36,14 +36,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tag="en"
-                android:text="English" />
+                android:text="@string/language_en" />
 
             <RadioButton
                 android:id="@+id/radio_de"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tag="de"
-                android:text="Deutsch" />
+                android:text="@string/language_de" />
         </RadioGroup>
 
     </LinearLayout>

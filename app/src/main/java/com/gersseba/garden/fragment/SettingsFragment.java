@@ -26,16 +26,13 @@ public class SettingsFragment extends Fragment {
     private FragmentSettingsBinding binding;
     private LocaleManager localeManager;
     private boolean updatingSelection = false;
-    private ExecutorService localeExecutor;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         // use DataStore-backed settings store
-        SettingsDataStoreImpl store = SettingsDataStoreImpl.create(context);
-        // create an executor tied to this fragment's lifecycle and provide it to LocaleManager
-        localeExecutor = Executors.newSingleThreadExecutor();
-        localeManager = new LocaleManager(store, null, localeExecutor);
+        SettingsDataStoreImpl store = SettingsDataStoreImpl.getInstance(context);
+        localeManager = LocaleManager.getInstance(store);
     }
 
     @Nullable
@@ -49,17 +46,11 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // Set initial state from whatever LocaleManager currently holds (might be null if still loading)
+        updateRadioButtons(localeManager.getCurrentLocale());
+
         // Observe persisted locale and update UI when it posts a value to avoid races.
-        localeManager.currentLocale().observe(getViewLifecycleOwner(), locale -> {
-            if (locale == null) return;
-            updatingSelection = true; // prevent listener loop
-            if (Locale.GERMAN.getLanguage().equals(locale.getLanguage())) {
-                binding.languageRadioGroup.check(binding.radioDe.getId());
-            } else {
-                binding.languageRadioGroup.check(binding.radioEn.getId());
-            }
-            updatingSelection = false;
-        });
+        localeManager.currentLocale().observe(getViewLifecycleOwner(), this::updateRadioButtons);
 
         binding.languageRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (updatingSelection) return;
@@ -72,6 +63,17 @@ public class SettingsFragment extends Fragment {
         });
     }
 
+    private void updateRadioButtons(Locale locale) {
+        if (locale == null || binding == null) return;
+        updatingSelection = true; // prevent listener loop
+        if (Locale.GERMAN.getLanguage().equals(locale.getLanguage())) {
+            binding.languageRadioGroup.check(binding.radioDe.getId());
+        } else {
+            binding.languageRadioGroup.check(binding.radioEn.getId());
+        }
+        updatingSelection = false;
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -81,13 +83,13 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        // shut down executor to avoid background task leaks
-        if (localeExecutor != null) {
-            localeExecutor.shutdownNow();
-            localeExecutor = null;
-        }
     }
 }
+
+
+
+
+
 
 
 

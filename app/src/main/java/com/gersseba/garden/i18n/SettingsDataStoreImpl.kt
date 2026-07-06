@@ -6,12 +6,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.io.File
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 /**
  * DataStore-backed implementation of SettingsDataStore.
@@ -22,19 +24,22 @@ class SettingsDataStoreImpl private constructor(private val dataStore: DataStore
     companion object {
         private val KEY_LANGUAGE = stringPreferencesKey("app.language")
 
-        // Create from Android Context
+        @Volatile
+        private var INSTANCE: SettingsDataStoreImpl? = null
+
+        /**
+         * Returns a singleton instance of SettingsDataStoreImpl.
+         */
         @JvmStatic
-        fun create(context: Context): SettingsDataStoreImpl {
-            val ds = PreferenceDataStoreFactory.create(
-                scope = CoroutineScope(Dispatchers.IO),
-                produceFile = { context.preferencesDataStoreFile("app_settings.preferences_pb") }
-            )
-            return SettingsDataStoreImpl(ds)
+        fun getInstance(context: Context): SettingsDataStoreImpl {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: SettingsDataStoreImpl(context.applicationContext.dataStore).also { INSTANCE = it }
+            }
         }
 
         // Create from a File (useful for tests)
         @JvmStatic
-        fun create(file: File): SettingsDataStoreImpl {
+        fun createForTest(file: File): SettingsDataStoreImpl {
             val ds = PreferenceDataStoreFactory.create(
                 scope = CoroutineScope(Dispatchers.IO),
                 produceFile = { file }
@@ -43,15 +48,19 @@ class SettingsDataStoreImpl private constructor(private val dataStore: DataStore
         }
     }
 
-    // Java-friendly synchronous implementations that delegate to DataStore using runBlocking.
+    // Java-friendly synchronous implementations that delegate to DataStore using runBlocking on IO dispatcher.
     // Calls are intended to be made off the main thread; callers should ensure not to block UI thread.
-    override fun getSavedLocale(): String? = runBlocking { dataStore.data.first()[KEY_LANGUAGE] }
+    override fun getSavedLocale(): String? = runBlocking(Dispatchers.IO) {
+        try {
+            dataStore.data.first()[KEY_LANGUAGE]
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     override fun saveLocale(languageTag: String) {
-        runBlocking { dataStore.edit { prefs -> prefs[KEY_LANGUAGE] = languageTag } }
+        runBlocking(Dispatchers.IO) {
+            dataStore.edit { prefs -> prefs[KEY_LANGUAGE] = languageTag }
+        }
     }
 }
-
-
-
-

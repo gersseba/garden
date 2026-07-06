@@ -100,8 +100,14 @@ public class PlantDetailFragment extends Fragment {
         viewModel.getPhotos().observe(getViewLifecycleOwner(),
                 photos -> photoAdapter.submitList(photos));
 
-        viewModel.getGeneralInfo().observe(getViewLifecycleOwner(),
-                this::bindGeneralInfo);
+        viewModel.getGeneralInfo().observe(getViewLifecycleOwner(), info -> {
+            bindGeneralInfo(info);
+            // Re-check localized text when general info (including fallback) changes
+            String localized = viewModel.getGeneralInfoText().getValue();
+            if (localized == null || localized.isEmpty()) {
+                binding.generalInfoDescription.setText(info.description);
+            }
+        });
 
         // Prefer DB-backed long-form general info when available; fall back to resource/mocked description
         viewModel.getGeneralInfoText().observe(getViewLifecycleOwner(), text -> {
@@ -124,7 +130,6 @@ public class PlantDetailFragment extends Fragment {
     }
 
     private void bindGeneralInfo(@NonNull PlantDetailInfo info) {
-        binding.generalInfoDescription.setText(info.description);
         binding.generalInfoSpeciesValue.setText(info.scientificName);
         binding.generalInfoFamilyValue.setText(info.plantFamily);
         binding.generalInfoLightValue.setText(info.sunExposure);
