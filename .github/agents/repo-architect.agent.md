@@ -121,8 +121,8 @@ Validate existing agentic project structure (focus on structure, not deep file i
      ✅ copilot-instructions.md (1,245 chars)
      ✅ AGENTS.md (symlink → .github/copilot-instructions.md)
 
-   Agents Layer:
-     ✅ .github/agents/reviewer.md
+    Agents Layer:
+     ✅ .github/agents/ai-team-producer.agent.md
      ⚠️ .github/agents/architect.md - missing 'model' field
 
    Skills Layer:
@@ -417,11 +417,11 @@ After scaffolding or validation, provide:
 ```
 ## Scaffolding Complete ✅
 
-Created:
+  Created:
   .github/
   ├── copilot-instructions.md (new)
   ├── agents/
-  │   └── code-reviewer.agent.md (new)
+  │   └── ai-team-dev.agent.md (new)
   ├── instructions/
   │   └── typescript.instructions.md (new)
   └── prompts/

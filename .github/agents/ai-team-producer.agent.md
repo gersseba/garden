@@ -104,7 +104,7 @@ Constraints, interfaces, and relevant files.
 ## Definition of Done
 - [ ] Branch `feature/{N}-kebab-title`
 - [ ] PR title `#{N} {Title}`
-- [ ] Reviewer approved
+- [ ] GitHub review approved
 - [ ] PR merged
 - [ ] Issue closed
 ```
@@ -113,7 +113,7 @@ Constraints, interfaces, and relevant files.
 
 - Do not write or edit application source code.
 - Do not run build/test commands yourself unless user explicitly asks.
-- Do not bypass reviewer approval before merge.
+- Do not bypass GitHub review approval before merge.
 - Keep documentation edits limited to planning/coordination docs.
 
 ## Communication Style
