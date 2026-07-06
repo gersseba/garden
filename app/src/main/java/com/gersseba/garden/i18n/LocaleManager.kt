@@ -61,11 +61,11 @@ class LocaleManager @JvmOverloads constructor(
 
     /** Sets a new locale and persists it without blocking the caller. */
     fun setLocale(locale: Locale?) {
-        if (locale == null) return
+        val nonNullLocale = locale ?: return
         scope.launch(Dispatchers.IO) {
-            settings.saveLocale(locale.toLanguageTag())
-            currentLocaleValue = locale
-            _currentLocale.postValue(locale)
+            settings.saveLocale(nonNullLocale.toLanguageTag())
+            currentLocaleValue = nonNullLocale
+            _currentLocale.postValue(nonNullLocale)
         }
     }
 

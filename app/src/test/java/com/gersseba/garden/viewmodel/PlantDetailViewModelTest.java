@@ -6,6 +6,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.gersseba.garden.database.dao.LocalizedTextDao;
+import com.gersseba.garden.database.entity.LocalizedTextEntity;
 import com.gersseba.garden.model.Plant;
 import com.gersseba.garden.model.PlantCareTask;
 import com.gersseba.garden.model.PlantDetailInfo;
@@ -35,11 +37,13 @@ public class PlantDetailViewModelTest {
 
     private PlantDetailViewModel viewModel;
     private FakePlantRepository repository;
+    private FakeLocalizedTextRepository localizedTextRepository;
 
     @Before
     public void setUp() {
         repository = new FakePlantRepository();
-        viewModel = new PlantDetailViewModel(new Application(), repository);
+        localizedTextRepository = new FakeLocalizedTextRepository();
+        viewModel = new PlantDetailViewModel(new Application(), repository, localizedTextRepository, null);
     }
 
     @Test
@@ -137,7 +141,8 @@ public class PlantDetailViewModelTest {
 
     @Test
     public void getGeneralInfoText_returnsNullWhenNoDb() {
-        // Using default FakePlantRepository and no LocalizedTextRepository injected -> generalInfoText should be null
+        // Use a viewmodel without localized repo to test fallback
+        PlantDetailViewModel noDbViewModel = new PlantDetailViewModel(new Application(), repository, null, null);
         repository.setPlant(new Plant(
                 20L,
                 "Test",
@@ -149,27 +154,71 @@ public class PlantDetailViewModelTest {
                 "Soil",
                 true,
                 ""));
-        viewModel.getGeneralInfoText().observeForever(s -> {});
-        viewModel.init(20L);
+        noDbViewModel.getGeneralInfoText().observeForever(s -> {});
+        noDbViewModel.init(20L);
 
-        // No DB -> get value null
-        assertEquals(null, viewModel.getGeneralInfoText().getValue());
+        assertEquals(null, noDbViewModel.getGeneralInfoText().getValue());
     }
 
     @Test
-    public void photoSummary_visibilityLogic_prefersDb() {
-        // Simulate a photo with no aiSummary in model but DB provides one.
-        PlantPhoto p = new PlantPhoto(200L, 111, "", LocalDateTime.now(), "");
+    public void photoSummary_prefersLocalizedDbValue() {
+        long photoId = 200L;
+        PlantPhoto p = new PlantPhoto(photoId, 111, "", LocalDateTime.now(), "Original AI Summary");
         repository.setPhotos(Collections.singletonList(p));
+
+        // Setup localized text in DB
+        localizedTextRepository.setLocalizedText("photo", photoId, "ai_summary", "Localized DB Summary", null);
+
         viewModel.getPhotos().observeForever(list -> {});
-
-        // Inject a NoOp localized repository that returns nulls by default
-        // For this unit test we will call getPhotoSummaryLive directly; since LiveData from DB isn't available
-        // ensure method returns non-null LiveData (may contain null value)
+        viewModel.getCurrentPhotoSummary().observeForever(s -> {});
         viewModel.init(5L);
+        viewModel.setSelectedPhotoId(photoId);
 
-        LiveData<String> live = viewModel.getPhotoSummaryLive(200L);
-        assertNotNull(live);
+        // Should return the DB summary
+        assertEquals("Localized DB Summary", viewModel.getCurrentPhotoSummary().getValue());
+    }
+
+    @Test
+    public void photoSummary_fallsBackToNullWhenNoDbValue() {
+        long photoId = 201L;
+        PlantPhoto p = new PlantPhoto(photoId, 111, "", LocalDateTime.now(), "Original AI Summary");
+        repository.setPhotos(Collections.singletonList(p));
+
+        viewModel.getPhotos().observeForever(list -> {});
+        viewModel.getCurrentPhotoSummary().observeForever(s -> {});
+        viewModel.init(6L);
+        viewModel.setSelectedPhotoId(photoId);
+
+        // Should return null from DB (fragment handles fallback to photo.aiSummary)
+        assertEquals(null, viewModel.getCurrentPhotoSummary().getValue());
+    }
+
+    private static final class FakeLocalizedTextRepository extends com.gersseba.garden.repository.LocalizedTextRepository {
+        private final MutableLiveData<String> textLiveData = new MutableLiveData<>();
+
+        FakeLocalizedTextRepository() {
+            super(new LocalizedTextDao() {
+                @Override
+                public long insertOrUpdate(LocalizedTextEntity entity) { return 0; }
+                @Override
+                public LiveData<LocalizedTextEntity> getByEntityAndKeyLive(String entityType, long entityId, String key) { return null; }
+                @Override
+                public LocalizedTextEntity getByEntityAndKeySync(String entityType, long entityId, String key) { return null; }
+                @Override
+                public void deleteByEntity(String entityType, long entityId) {}
+                @Override
+                public void deleteById(long id) {}
+            }, Runnable::run);
+        }
+
+        void setLocalizedText(String entityType, long entityId, String key, String textEn, String textDe) {
+            textLiveData.setValue(textEn); // Simplification for test: return En
+        }
+
+        @Override
+        public LiveData<String> getLocalizedTextLive(String entityType, long entityId, String key, java.util.Locale locale) {
+            return textLiveData;
+        }
     }
 
     private static final class FakePlantRepository implements PlantRepositoryContract {

@@ -88,7 +88,6 @@ public class PlantDetailViewModel extends AndroidViewModel {
             }
             return this.localizedTextRepository.getLocalizedTextLive("photo", photoId, "ai_summary", determineLocale());
         });
-
         this.selectedPlantLiveData = Transformations.switchMap(
                 selectedPlantId,
                 repository::observePlant);

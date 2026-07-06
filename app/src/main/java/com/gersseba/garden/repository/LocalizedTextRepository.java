@@ -29,7 +29,7 @@ public class LocalizedTextRepository implements LocalizedTextDataSource {
     }
 
     // Visible for tests
-    LocalizedTextRepository(@NonNull LocalizedTextDao dao, @NonNull Executor writeExecutor) {
+    protected LocalizedTextRepository(@NonNull LocalizedTextDao dao, @NonNull Executor writeExecutor) {
         this.dao = dao;
         this.writeExecutor = writeExecutor;
     }

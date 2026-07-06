@@ -102,21 +102,13 @@ public class PlantDetailFragment extends Fragment {
 
         viewModel.getGeneralInfo().observe(getViewLifecycleOwner(), info -> {
             bindGeneralInfo(info);
-            // Re-check localized text when general info (including fallback) changes
-            String localized = viewModel.getGeneralInfoText().getValue();
-            if (localized == null || localized.isEmpty()) {
-                binding.generalInfoDescription.setText(info.description);
-            }
+            // Only update description if DB text is empty to prevent overwriting
+            updateDescription(viewModel.getGeneralInfoText().getValue(), info);
         });
 
         // Prefer DB-backed long-form general info when available; fall back to resource/mocked description
         viewModel.getGeneralInfoText().observe(getViewLifecycleOwner(), text -> {
-            if (text != null && !text.isEmpty()) {
-                binding.generalInfoDescription.setText(text);
-            } else {
-                PlantDetailInfo info = viewModel.getGeneralInfo().getValue();
-                if (info != null) binding.generalInfoDescription.setText(info.description);
-            }
+            updateDescription(text, viewModel.getGeneralInfo().getValue());
         });
 
         viewModel.getCareTasks().observe(getViewLifecycleOwner(),
@@ -148,6 +140,14 @@ public class PlantDetailFragment extends Fragment {
         binding.carePlacementText.setText(info.carePlacement);
         binding.careCuttingText.setText(info.careCutting);
         binding.careNutrientsText.setText(info.careNutrients);
+    }
+
+    private void updateDescription(String dbText, PlantDetailInfo info) {
+        if (dbText != null && !dbText.isEmpty()) {
+            binding.generalInfoDescription.setText(dbText);
+        } else if (info != null) {
+            binding.generalInfoDescription.setText(info.description);
+        }
     }
 
     @Override

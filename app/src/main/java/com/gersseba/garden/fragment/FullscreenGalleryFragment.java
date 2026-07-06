@@ -135,4 +135,3 @@ public class FullscreenGalleryFragment extends Fragment {
         binding = null;
     }
 }
-
