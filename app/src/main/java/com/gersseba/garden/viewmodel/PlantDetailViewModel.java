@@ -35,24 +35,60 @@ public class PlantDetailViewModel extends AndroidViewModel {
     private final LiveData<PlantDetailInfo> generalInfoLiveData;
     private final LiveData<String> generalInfoTextLiveData;
     private final LocalizedTextRepository localizedTextRepository;
+    private final MutableLiveData<Long> selectedPhotoId = new MutableLiveData<>();
+    private final LiveData<String> photoSummaryLiveData;
+    // Locale manager is created lazily; visible for tests via constructor injection
+    private final com.gersseba.garden.i18n.LocaleManager localeManager;
     private final MutableLiveData<List<PlantCareTask>> careTasksLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> plantDeletedLiveData = new MutableLiveData<>(false);
 
     public PlantDetailViewModel(@NonNull Application application) {
-        this(application, new PlantRepository(application));
+        this(application, new PlantRepository(application), null, null);
     }
 
     PlantDetailViewModel(@NonNull Application application,
             @NonNull PlantRepositoryContract repository) {
+        this(application, repository, null, null);
+    }
+
+    // Visible for tests: allow injecting localized text repository and locale manager
+    PlantDetailViewModel(@NonNull Application application,
+            @NonNull PlantRepositoryContract repository,
+            LocalizedTextRepository localizedTextRepository,
+            com.gersseba.garden.i18n.LocaleManager localeManager) {
         super(application);
         this.repository = repository;
-        LocalizedTextRepository tmp = null;
-        try {
-            tmp = new LocalizedTextRepository(application);
-        } catch (Exception ignored) {
-            // In unit tests the Room database may not be available; fall back to null repository.
+
+        LocalizedTextRepository tmp = localizedTextRepository;
+        if (tmp == null) {
+            try {
+                tmp = new LocalizedTextRepository(application);
+            } catch (Exception ignored) {
+                // In unit tests the Room database may not be available; fall back to null repository.
+                tmp = null;
+            }
         }
         this.localizedTextRepository = tmp;
+
+        if (localeManager == null) {
+            com.gersseba.garden.i18n.SettingsDataStoreImpl store = null;
+            try {
+                store = com.gersseba.garden.i18n.SettingsDataStoreImpl.getInstance(application);
+            } catch (Exception ignored) {
+                // tests may not provide DataStore; localeManager will be null and fallback to Locale.getDefault()
+            }
+            this.localeManager = store == null ? null : new com.gersseba.garden.i18n.LocaleManager(store);
+        } else {
+            this.localeManager = localeManager;
+        }
+
+        this.photoSummaryLiveData = Transformations.switchMap(selectedPhotoId, photoId -> {
+            if (photoId == null || this.localizedTextRepository == null) {
+                return new MutableLiveData<>(null);
+            }
+            return this.localizedTextRepository.getLocalizedTextLive("photo", photoId, "ai_summary", determineLocale());
+        });
+
         this.selectedPlantLiveData = Transformations.switchMap(
                 selectedPlantId,
                 repository::observePlant);
@@ -66,8 +102,9 @@ public class PlantDetailViewModel extends AndroidViewModel {
 
         this.generalInfoTextLiveData = Transformations.switchMap(selectedPlantLiveData, plant -> {
             if (plant == null) return new MutableLiveData<>(null);
-            if (localizedTextRepository == null) return new MutableLiveData<>(null);
-            return localizedTextRepository.getLocalizedTextLive("plant", plant.id, "general_info", java.util.Locale.getDefault());
+            if (this.localizedTextRepository == null) return new MutableLiveData<>(null);
+            java.util.Locale locale = determineLocale();
+            return this.localizedTextRepository.getLocalizedTextLive("plant", plant.id, "general_info", locale);
         });
 
         careTasksLiveData.setValue(buildMockedCareTasks());
@@ -101,6 +138,38 @@ public class PlantDetailViewModel extends AndroidViewModel {
 
     public LiveData<String> getGeneralInfoText() {
         return generalInfoTextLiveData;
+    }
+
+    /**
+     * Sets the currently viewed photo ID to update the localized summary.
+     */
+    public void setSelectedPhotoId(long photoId) {
+        selectedPhotoId.setValue(photoId);
+    }
+
+    /**
+     * Returns the localized AI summary for the currently selected photo.
+     */
+    public LiveData<String> getCurrentPhotoSummary() {
+        return photoSummaryLiveData;
+    }
+
+    /**
+     * Returns the localized AI summary for a photo if present in DB; null otherwise.
+     */
+    public LiveData<String> getPhotoSummaryLive(long photoId) {
+        if (localizedTextRepository == null) return new MutableLiveData<>(null);
+        return localizedTextRepository.getLocalizedTextLive("photo", photoId, "ai_summary", determineLocale());
+    }
+
+    private java.util.Locale determineLocale() {
+        try {
+            java.util.Locale cur = localeManager == null ? null : localeManager.getCurrentLocale();
+            if (cur != null) return cur;
+        } catch (Exception ignored) {
+            // fall back
+        }
+        return java.util.Locale.getDefault();
     }
 
     public LiveData<List<PlantCareTask>> getCareTasks() {
