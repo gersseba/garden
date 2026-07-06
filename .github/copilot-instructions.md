@@ -51,6 +51,10 @@
 5. Commit with issue reference: `feat: add plant photo capture (Fixes #42)`.
 6. Push and create PR; request QA sign-off before Producer merges.
 
+Note on orchestration (ticket-first, two-phase):
+- Phase 1 (intake): create and refine tickets from user requests. The Producer may create tickets automatically after intake.
+- Phase 2 (implementation): start only when a user or producer issues a specific implementation command (for example: "implement ticket #123"). Do not rely on grouping work into "work packages."
+
 ## Important Patterns
 - **AI Integration:** Use `GeminiAIService` for plant identification and health analysis. Filter photo metadata before sending to API.
 - **Plant-Centric Design:** Plant is the central entity. Photos, care plans, and tasks are all associated with a plant.
