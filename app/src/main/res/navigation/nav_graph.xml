@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_entryFragment_to_carePlanFragment"
             app:destination="@id/carePlanFragment" />
+        <action
+            android:id="@+id/action_entryFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
 
     <fragment
@@ -63,4 +66,10 @@
         android:name="com.gersseba.garden.fragment.CarePlanFragment"
         android:label="@string/care_plan_screen_title"
         tools:layout="@layout/fragment_care_plan" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.gersseba.garden.fragment.SettingsFragment"
+        android:label="@string/settings_screen_title"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

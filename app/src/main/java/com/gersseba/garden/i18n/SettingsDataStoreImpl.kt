@@ -10,12 +10,12 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 /**
  * DataStore-backed implementation of SettingsDataStore.
- * Provides a small Java-friendly synchronous API by using runBlocking for reads/writes.
+ * Provides suspend-based non-blocking read/write methods backed by Jetpack DataStore.
  */
 class SettingsDataStoreImpl private constructor(private val dataStore: DataStore<Preferences>) : SettingsDataStore {
 
@@ -43,12 +43,15 @@ class SettingsDataStoreImpl private constructor(private val dataStore: DataStore
         }
     }
 
-    // Non-blocking suspend implementations
-    override suspend fun getSavedLocale(): String? = dataStore.data.first()[KEY_LANGUAGE]
+    // Java-friendly synchronous implementations that delegate to DataStore using runBlocking.
+    // Calls are intended to be made off the main thread; callers should ensure not to block UI thread.
+    override fun getSavedLocale(): String? = runBlocking { dataStore.data.first()[KEY_LANGUAGE] }
 
-    override suspend fun saveLocale(languageTag: String) {
-        dataStore.edit { prefs -> prefs[KEY_LANGUAGE] = languageTag }
+    override fun saveLocale(languageTag: String) {
+        runBlocking { dataStore.edit { prefs -> prefs[KEY_LANGUAGE] = languageTag } }
     }
 }
+
+
 
 

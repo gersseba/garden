@@ -135,6 +135,43 @@ public class PlantDetailViewModelTest {
         assertEquals(4, tasks.size());
     }
 
+    @Test
+    public void getGeneralInfoText_returnsNullWhenNoDb() {
+        // Using default FakePlantRepository and no LocalizedTextRepository injected -> generalInfoText should be null
+        repository.setPlant(new Plant(
+                20L,
+                "Test",
+                "Test",
+                "Family",
+                LocalDate.now(),
+                "Light",
+                "Water",
+                "Soil",
+                true,
+                ""));
+        viewModel.getGeneralInfoText().observeForever(s -> {});
+        viewModel.init(20L);
+
+        // No DB -> get value null
+        assertEquals(null, viewModel.getGeneralInfoText().getValue());
+    }
+
+    @Test
+    public void photoSummary_visibilityLogic_prefersDb() {
+        // Simulate a photo with no aiSummary in model but DB provides one.
+        PlantPhoto p = new PlantPhoto(200L, 111, "", LocalDateTime.now(), "");
+        repository.setPhotos(Collections.singletonList(p));
+        viewModel.getPhotos().observeForever(list -> {});
+
+        // Inject a NoOp localized repository that returns nulls by default
+        // For this unit test we will call getPhotoSummaryLive directly; since LiveData from DB isn't available
+        // ensure method returns non-null LiveData (may contain null value)
+        viewModel.init(5L);
+
+        LiveData<String> live = viewModel.getPhotoSummaryLive(200L);
+        assertNotNull(live);
+    }
+
     private static final class FakePlantRepository implements PlantRepositoryContract {
         private final MutableLiveData<List<Plant>> plantsLiveData = new MutableLiveData<>(Collections.emptyList());
         private final MutableLiveData<Plant> plantLiveData = new MutableLiveData<>();

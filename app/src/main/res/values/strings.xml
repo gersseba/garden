@@ -5,6 +5,7 @@
     <string name="entry_screen_description">Choose where you want to start.</string>
     <string name="my_plants_action">My Plants</string>
     <string name="care_plan_action">Care Plan</string>
+    <string name="settings_action">Settings</string>
 
     <string name="my_plants_screen_title">My Plants</string>
     <string name="my_plants_mock_description">Mocked plant list for the upcoming catalog experience.</string>
@@ -32,6 +33,8 @@
     <string name="default_plant_notes">Initial healthy state. Monitor soil moisture daily.</string>
 
     <string name="care_plan_screen_title">Care Plan</string>
+    <string name="settings_screen_title">Settings</string>
+    <string name="settings_screen_description">Choose your preferred language for the app.</string>
     <string name="care_plan_mock_description">Mocked monthly care plan for the upcoming planning experience.</string>
     <string name="care_plan_mock_items">• Week 1: Check soil moisture\n• Week 2: Rotate indoor pots\n• Week 3: Inspect leaves for pests\n• Week 4: Refresh mulch</string>
     <string name="care_plan_this_month_label">This month\'s tasks</string>

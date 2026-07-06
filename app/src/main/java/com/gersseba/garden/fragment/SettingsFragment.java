@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import com.gersseba.garden.databinding.FragmentSettingsBinding;
 import com.gersseba.garden.i18n.LocaleManager;
 import com.gersseba.garden.i18n.SettingsDataStoreImpl;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import java.util.Locale;
 
@@ -24,13 +26,16 @@ public class SettingsFragment extends Fragment {
     private FragmentSettingsBinding binding;
     private LocaleManager localeManager;
     private boolean updatingSelection = false;
+    private ExecutorService localeExecutor;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         // use DataStore-backed settings store
         SettingsDataStoreImpl store = SettingsDataStoreImpl.create(context);
-        localeManager = new LocaleManager(store);
+        // create an executor tied to this fragment's lifecycle and provide it to LocaleManager
+        localeExecutor = Executors.newSingleThreadExecutor();
+        localeManager = new LocaleManager(store, null, localeExecutor);
     }
 
     @Nullable
@@ -72,7 +77,18 @@ public class SettingsFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        // shut down executor to avoid background task leaks
+        if (localeExecutor != null) {
+            localeExecutor.shutdownNow();
+            localeExecutor = null;
+        }
+    }
 }
+
 
 
 
