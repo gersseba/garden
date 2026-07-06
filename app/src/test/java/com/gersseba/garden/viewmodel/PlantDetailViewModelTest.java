@@ -6,6 +6,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.gersseba.garden.database.dao.LocalizedTextDao;
+import com.gersseba.garden.database.entity.LocalizedTextEntity;
 import com.gersseba.garden.model.Plant;
 import com.gersseba.garden.model.PlantCareTask;
 import com.gersseba.garden.model.PlantDetailInfo;
@@ -195,7 +197,18 @@ public class PlantDetailViewModelTest {
         private final MutableLiveData<String> textLiveData = new MutableLiveData<>();
 
         FakeLocalizedTextRepository() {
-            super(null, null); // We will override the methods we use
+            super(new LocalizedTextDao() {
+                @Override
+                public long insertOrUpdate(LocalizedTextEntity entity) { return 0; }
+                @Override
+                public LiveData<LocalizedTextEntity> getByEntityAndKeyLive(String entityType, long entityId, String key) { return null; }
+                @Override
+                public LocalizedTextEntity getByEntityAndKeySync(String entityType, long entityId, String key) { return null; }
+                @Override
+                public void deleteByEntity(String entityType, long entityId) {}
+                @Override
+                public void deleteById(long id) {}
+            }, Runnable::run);
         }
 
         void setLocalizedText(String entityType, long entityId, String key, String textEn, String textDe) {
