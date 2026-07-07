@@ -51,8 +51,11 @@ public class PlantDetailViewModel extends AndroidViewModel {
         this(application, repository, null, null);
     }
 
-    // Visible for tests: allow injecting localized text repository and locale manager
-    PlantDetailViewModel(@NonNull Application application,
+    /**
+     * Constructor for dependency injection via ViewModelFactory.
+     * Visible for testing and DI: accept injected LocalizedTextRepository and LocaleManager.
+     */
+    public PlantDetailViewModel(@NonNull Application application,
             @NonNull PlantRepositoryContract repository,
             LocalizedTextRepository localizedTextRepository,
             com.gersseba.garden.i18n.LocaleManager localeManager) {

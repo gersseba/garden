@@ -17,6 +17,8 @@ import com.gersseba.garden.R;
 import com.gersseba.garden.adapter.PhotoGalleryAdapter;
 import com.gersseba.garden.adapter.PlantCareTaskAdapter;
 import com.gersseba.garden.databinding.FragmentPlantDetailBinding;
+import com.gersseba.garden.di.ServiceLocator;
+import com.gersseba.garden.di.ViewModelFactory;
 import com.gersseba.garden.model.PlantDetailInfo;
 import com.gersseba.garden.viewmodel.PlantDetailViewModel;
 
@@ -45,7 +47,9 @@ public class PlantDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(PlantDetailViewModel.class);
+        ServiceLocator serviceLocator = ServiceLocator.getInstance(requireContext());
+        ViewModelFactory factory = new ViewModelFactory(requireActivity().getApplication(), serviceLocator);
+        viewModel = new ViewModelProvider(requireActivity(), factory).get(PlantDetailViewModel.class);
 
         long plantId = 0L;
         if (getArguments() != null) {

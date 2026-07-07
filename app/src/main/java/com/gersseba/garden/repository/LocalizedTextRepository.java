@@ -28,6 +28,10 @@ public class LocalizedTextRepository implements LocalizedTextDataSource {
         this(AppDatabase.getInstance(application).localizedTextDao(), Executors.newSingleThreadExecutor());
     }
 
+    public LocalizedTextRepository(@NonNull com.gersseba.garden.database.AppDatabase appDatabase) {
+        this(appDatabase.localizedTextDao(), Executors.newSingleThreadExecutor());
+    }
+
     // Visible for tests
     protected LocalizedTextRepository(@NonNull LocalizedTextDao dao, @NonNull Executor writeExecutor) {
         this.dao = dao;

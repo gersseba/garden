@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.gersseba.garden.R;
 import com.gersseba.garden.adapter.PlantCardAdapter;
 import com.gersseba.garden.databinding.FragmentMyPlantsBinding;
+import com.gersseba.garden.di.ServiceLocator;
+import com.gersseba.garden.di.ViewModelFactory;
 import com.gersseba.garden.model.Plant;
 import com.gersseba.garden.viewmodel.MyPlantsViewModel;
 
@@ -39,7 +41,9 @@ public class MyPlantsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(MyPlantsViewModel.class);
+        ServiceLocator serviceLocator = ServiceLocator.getInstance(requireContext());
+        ViewModelFactory factory = new ViewModelFactory(requireActivity().getApplication(), serviceLocator);
+        viewModel = new ViewModelProvider(this, factory).get(MyPlantsViewModel.class);
 
         setUpRecyclerView();
         setUpFab();

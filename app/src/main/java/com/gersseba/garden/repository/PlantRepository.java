@@ -34,6 +34,10 @@ public class PlantRepository implements PlantRepositoryContract {
         this(AppDatabase.getInstance(application), Executors.newSingleThreadExecutor());
     }
 
+    public PlantRepository(@NonNull AppDatabase appDatabase) {
+        this(appDatabase, Executors.newSingleThreadExecutor());
+    }
+
     PlantRepository(@NonNull AppDatabase appDatabase, @NonNull Executor writeExecutor) {
         this.plantDao = appDatabase.plantDao();
         this.photoDao = appDatabase.photoDao();

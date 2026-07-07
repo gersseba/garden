@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.gersseba.garden.adapter.CarePlanAdapter;
 import com.gersseba.garden.databinding.FragmentCarePlanBinding;
+import com.gersseba.garden.di.ServiceLocator;
+import com.gersseba.garden.di.ViewModelFactory;
 import com.gersseba.garden.viewmodel.CarePlanViewModel;
 
 public class CarePlanFragment extends Fragment {
@@ -35,8 +37,9 @@ public class CarePlanFragment extends Fragment {
         binding.careTaskList.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.careTaskList.setAdapter(adapter);
 
-        CarePlanViewModel viewModel =
-                new ViewModelProvider(this).get(CarePlanViewModel.class);
+        ServiceLocator serviceLocator = ServiceLocator.getInstance(requireContext());
+        ViewModelFactory factory = new ViewModelFactory(requireActivity().getApplication(), serviceLocator);
+        CarePlanViewModel viewModel = new ViewModelProvider(this, factory).get(CarePlanViewModel.class);
 
         viewModel.getTasks().observe(getViewLifecycleOwner(), adapter::submitList);
     }

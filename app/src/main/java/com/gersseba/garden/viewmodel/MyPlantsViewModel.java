@@ -55,7 +55,11 @@ public class MyPlantsViewModel extends AndroidViewModel {
                 });
     }
 
-    MyPlantsViewModel(
+    /**
+     * Constructor for dependency injection via ViewModelFactory.
+     * Visible for testing and DI.
+     */
+    public MyPlantsViewModel(
             @NonNull Application application,
             @NonNull PlantRepositoryContract repository,
             @NonNull List<String> plantCatalog,
