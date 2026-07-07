@@ -14,6 +14,9 @@ public class ResourceLocalizationRepository implements LocalizationRepository {
     private final Map<String, String> cache = new ConcurrentHashMap<>();
 
     public ResourceLocalizationRepository(LocalizedTextDataSource dataSource, ResourceProvider resources) {
+        if (resources == null) {
+            throw new IllegalArgumentException("ResourceProvider cannot be null");
+        }
         this.dataSource = dataSource;
         this.resources = resources;
     }
@@ -22,7 +25,8 @@ public class ResourceLocalizationRepository implements LocalizationRepository {
     public String getLocalizedText(String key, Locale locale) {
         if (key == null) return "";
         String cacheKey = key + "|" + (locale == null ? "" : locale.toLanguageTag());
-        if (cache.containsKey(cacheKey)) return cache.get(cacheKey);
+        String cached = cache.get(cacheKey);
+        if (cached != null) return cached;
 
         // 1) DB / data source
         String db = null;

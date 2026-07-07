@@ -1,9 +1,12 @@
 // Java unit tests for LocaleManager
 package com.gersseba.garden.i18n;
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
@@ -16,6 +19,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class LocaleManagerTest {
+
+    @Rule
+    public TestRule rule = new InstantTaskExecutorRule();
 
     static class FakeSettings implements SettingsDataStore {
         volatile String saved;

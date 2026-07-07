@@ -22,7 +22,8 @@ public class LocaleManager {
     private final MutableLiveData<Locale> currentLocale = new MutableLiveData<>();
     // keep a synchronous copy for tests and callers without Android Looper
     private volatile Locale currentLocaleValue;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor;
+    private boolean isInitialized = false;
 
     // Define supported locales for the application.
     private final Set<Locale> supportedLocales = new HashSet<>(Arrays.asList(
@@ -31,13 +32,27 @@ public class LocaleManager {
     ));
 
     public LocaleManager(SettingsDataStore settingsDataStore) {
+        this(settingsDataStore, null, Executors.newSingleThreadExecutor());
+    }
+
+    /**
+     * Internal/test constructor for injecting dependencies.
+     */
+    LocaleManager(SettingsDataStore settingsDataStore, java.util.concurrent.CountDownLatch initLatch, ExecutorService executor) {
         this.settings = settingsDataStore;
+        this.executor = executor;
         // load initial value asynchronously to avoid blocking callers
         executor.execute(() -> {
             String saved = settings.getSavedLocale();
             Locale locale = saved == null || saved.isEmpty() ? Locale.getDefault() : Locale.forLanguageTag(saved);
-            currentLocaleValue = locale;
-            currentLocale.postValue(locale);
+            synchronized (this) {
+                if (!isInitialized) {
+                    currentLocaleValue = locale;
+                    currentLocale.postValue(locale);
+                    isInitialized = true;
+                }
+            }
+            if (initLatch != null) initLatch.countDown();
         });
     }
 
@@ -56,6 +71,7 @@ public class LocaleManager {
         synchronized (this) {
             settings.saveLocale(locale.toLanguageTag());
             currentLocaleValue = locale;
+            isInitialized = true;
             // use postValue so observers on main thread are updated in Android; tests read value via getCurrentLocale()
             currentLocale.postValue(locale);
         }
@@ -75,6 +91,10 @@ public class LocaleManager {
      */
     public boolean isLocaleSupported(Locale locale) {
         if (locale == null) return false;
-        return supportedLocales.contains(locale);
+        String lang = locale.getLanguage();
+        for (Locale supported : supportedLocales) {
+            if (supported.getLanguage().equals(lang)) return true;
+        }
+        return false;
     }
 }
