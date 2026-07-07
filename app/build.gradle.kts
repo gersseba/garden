@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.datastore.preferences)
     // Kotlin coroutines (used by DataStore internals and our Kotlin helper)
     implementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit)
     testImplementation(libs.arch.core.testing)
     testImplementation(libs.mockito.core)
