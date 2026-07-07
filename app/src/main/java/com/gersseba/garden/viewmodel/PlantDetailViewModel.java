@@ -53,8 +53,9 @@ public class PlantDetailViewModel extends AndroidViewModel {
 
     /**
      * Constructor for dependency injection via ViewModelFactory.
-     * Visible for testing and DI: accept injected LocalizedTextRepository and LocaleManager.
-     * This constructor expects callers to provide all dependencies; no fallback initialization.
+     * Visible for testing and DI: accepts all dependencies as parameters.
+     * Dependencies may be null; methods accessing them should handle nulls gracefully.
+     * This constructor assigns injected parameters to fields only; no instantiation logic.
      */
     public PlantDetailViewModel(@NonNull Application application,
             @NonNull PlantRepositoryContract repository,

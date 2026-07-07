@@ -77,7 +77,7 @@ public class MyPlantsViewModel extends AndroidViewModel {
             @NonNull List<String> plantCatalog,
             @NonNull Random random,
             @NonNull String defaultPlantFamily,
-            @NonNull String default_sun_exposure,
+            @NonNull String defaultSunExposure,
             @NonNull String defaultWateringFrequency,
             @NonNull String defaultSoilType,
             boolean defaultIsIndoor,
@@ -89,7 +89,7 @@ public class MyPlantsViewModel extends AndroidViewModel {
         this.plantCatalog = plantCatalog;
         this.random = random;
         this.defaultPlantFamily = defaultPlantFamily;
-        this.defaultSunExposure = default_sun_exposure;
+        this.defaultSunExposure = defaultSunExposure;
         this.defaultWateringFrequency = defaultWateringFrequency;
         this.defaultSoilType = defaultSoilType;
         this.defaultIsIndoor = defaultIsIndoor;
