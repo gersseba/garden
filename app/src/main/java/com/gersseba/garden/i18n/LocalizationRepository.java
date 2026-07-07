@@ -12,4 +12,3 @@ public interface LocalizationRepository {
      */
     String getLocalizedText(String key, Locale locale);
 }
-

@@ -18,4 +18,3 @@ public interface ResourceProvider {
         return getString(resId, null);
     }
 }
-

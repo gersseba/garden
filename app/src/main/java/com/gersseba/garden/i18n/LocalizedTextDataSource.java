@@ -9,4 +9,3 @@ import java.util.Locale;
 public interface LocalizedTextDataSource {
     String getTextForKey(String key, Locale locale);
 }
-

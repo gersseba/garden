@@ -15,6 +15,7 @@ public final class ResourceKeyMapper {
     public static final String KEY_MOCK_DESCRIPTION = "mock.description";
 
     public static int mapKeyToResId(String key) {
+        if (key == null) return 0;
         switch (key) {
             case KEY_TASK_WATER:
                 return R.string.task_name_water;
@@ -29,4 +30,3 @@ public final class ResourceKeyMapper {
         }
     }
 }
-

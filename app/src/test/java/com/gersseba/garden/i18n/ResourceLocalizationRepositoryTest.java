@@ -21,12 +21,15 @@ public class ResourceLocalizationRepositoryTest {
     }
 
     static class FakeResourceProvider implements ResourceProvider {
-        Map<Integer, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
 
         @Override
         public String getString(int resId, Locale locale) {
-            // ignore locale in this fake; allow locale-specific map keys if desired
-            return map.get(resId);
+            return map.get(resId + "|" + (locale == null ? "" : locale.toLanguageTag()));
+        }
+
+        void put(int resId, Locale locale, String value) {
+            map.put(resId + "|" + (locale == null ? "" : locale.toLanguageTag()), value);
         }
     }
 
@@ -39,9 +42,9 @@ public class ResourceLocalizationRepositoryTest {
         dataSource = new FakeDataSource();
         resourceProvider = new FakeResourceProvider();
         // populate fake resources for mapping keys defined in ResourceKeyMapper
-        resourceProvider.map.put(com.gersseba.garden.R.string.task_name_water, "Water (res)");
-        resourceProvider.map.put(com.gersseba.garden.R.string.task_name_fertilize, "Fertilize (res)");
-        resourceProvider.map.put(com.gersseba.garden.R.string.plant_name_monstera, "Monstera (res)");
+        resourceProvider.put(com.gersseba.garden.R.string.task_name_water, Locale.ENGLISH, "Water (res)");
+        resourceProvider.put(com.gersseba.garden.R.string.task_name_fertilize, Locale.ENGLISH, "Fertilize (res)");
+        resourceProvider.put(com.gersseba.garden.R.string.plant_name_monstera, Locale.ENGLISH, "Monstera (res)");
 
         repository = new ResourceLocalizationRepository(dataSource, resourceProvider);
     }
@@ -55,17 +58,16 @@ public class ResourceLocalizationRepositoryTest {
 
     @Test
     public void fallsBackToResourceWhenDbMissing() {
-        String out = repository.getLocalizedText(ResourceKeyMapper.KEY_TASK_FERTILIZE, Locale.GERMAN);
+        // use Locale.ENGLISH to match what we put in setup
+        String out = repository.getLocalizedText(ResourceKeyMapper.KEY_TASK_FERTILIZE, Locale.ENGLISH);
         assertEquals("Fertilize (res)", out);
     }
 
     @Test
     public void fallsBackToEnglishWhenResourceMissingForLocale() {
-        // remove resource mapping for the key to simulate missing locale-specific string
-        resourceProvider.map.remove(com.gersseba.garden.R.string.plant_name_monstera);
-        // but provide english fallback via same resId
-        resourceProvider.map.put(com.gersseba.garden.R.string.plant_name_monstera, "Monstera (en)");
-
+        // provide only english fallback via same resId
+        resourceProvider.put(com.gersseba.garden.R.string.plant_name_monstera, Locale.ENGLISH, "Monstera (en)");
+        // ask for a different locale where we DON'T have a value
         String out = repository.getLocalizedText(ResourceKeyMapper.KEY_PLANT_MONSTERA, Locale.FRENCH);
         assertEquals("Monstera (en)", out);
     }
@@ -76,4 +78,3 @@ public class ResourceLocalizationRepositoryTest {
         assertEquals("", out);
     }
 }
-
