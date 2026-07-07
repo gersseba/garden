@@ -28,8 +28,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_24
-        targetCompatibility = JavaVersion.VERSION_24
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
         isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
@@ -39,7 +39,6 @@ android {
 
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-    implementation(libs.activity.ktx)
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
@@ -49,11 +48,6 @@ dependencies {
     implementation(libs.viewpager2)
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
-    // Jetpack DataStore for preferences-backed settings
-    implementation(libs.datastore.preferences)
-    // Kotlin coroutines (used by DataStore internals and our Kotlin helper)
-    implementation(libs.kotlinx.coroutines.core)
-    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit)
     testImplementation(libs.arch.core.testing)
     testImplementation(libs.mockito.core)
