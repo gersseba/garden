@@ -11,4 +11,4 @@ slug: "09-architecture-decisions"
 - **AD-002: MVVM + Repository** to keep UI logic thin and testable.
 - **AD-003: Gemini integration through service abstraction** to isolate AI provider concerns.
 - **AD-004: Two-tier care model (general vs current)** to separate educational reference from dynamic action planning.
-
+- **AD-005: Hybrid i18n Strategy (DB + Resources)** to allow dynamic AI-generated content in multiple languages with standard string resources as fallbacks.

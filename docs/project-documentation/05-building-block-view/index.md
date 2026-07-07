@@ -27,15 +27,20 @@ flowchart TB
 
 ### 5.2 Level 2 - Key Components
 - `fragment/`
-  - `GardenFragment`: plant list and entry points
+  - `MyPlantsFragment`: plant list and entry points
   - `PlantDetailFragment`: profile, gallery, care sections
-  - `CameraFragment`: photo capture flow
+  - `FullscreenGalleryFragment`: immersive photo viewing and AI summary display
+  - `SettingsFragment`: app settings and locale selection
 - `viewmodel/`
-  - `GardenViewModel`: list/search/filter state
+  - `MyPlantsViewModel`: list/search/filter state
   - `PlantDetailViewModel`: detail state and care sections
-  - `PhotoAnalysisViewModel`: upload/analysis orchestration
+  - `CarePlanViewModel`: global care task aggregation
 - `repository/`
-  - `PlantRepository`, `PhotoRepository`, care-related repository classes
+  - `PlantRepository`: core plant and photo data
+  - `LocalizedTextRepository`: Room-backed storage for dynamic translations (AI summaries, long-form info)
+- `i18n/`
+  - `LocaleManager`: manages current app locale and persistence
+  - `ResourceLocalizationRepository`: hybrid repository fetching from DB or Android resources
 - `service/`
   - `GeminiAIService`, identification/analysis helpers
 - `database/`
@@ -44,5 +49,5 @@ flowchart TB
 ### 5.3 Level 3 - Data-Centric Building Blocks
 - Plant is the central aggregate.
 - Photos, care plans, and care tasks are linked to a plant.
+- `LocalizedTextEntity` provides multi-language support for dynamic content.
 - Current tasks are generated/re-generated on demand and user-driven.
-

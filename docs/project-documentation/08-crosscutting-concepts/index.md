@@ -21,13 +21,14 @@ slug: "08-crosscutting-concepts"
 - Reactive data flows via lifecycle-aware observation.
 - No cloud sync in current scope.
 
-### 8.4 UI/UX and Accessibility
+### 8.4 UI/UX and Internationalization (i18n)
 - ViewBinding only (no `findViewById`).
-- Strings in `strings.xml`.
-- Material 3 components, touch target and content description checks.
+- Static strings in `strings.xml`.
+- Dynamic content (AI summaries, plant descriptions) uses `LocalizationRepository` with a fallback strategy: DB -> resources -> English fallback.
+- Locale is managed via `LocaleManager` and persisted in `SettingsDataStore`.
+- Material 3 components, touch target and content description checks for accessibility.
 
 ### 8.5 Testing
 - Unit tests for ViewModels/repositories/services.
 - Instrumentation tests for key UI/navigation flows.
 - AI calls tested with mocked responses.
-
