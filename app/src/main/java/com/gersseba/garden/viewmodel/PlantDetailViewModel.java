@@ -54,6 +54,7 @@ public class PlantDetailViewModel extends AndroidViewModel {
     /**
      * Constructor for dependency injection via ViewModelFactory.
      * Visible for testing and DI: accept injected LocalizedTextRepository and LocaleManager.
+     * This constructor expects callers to provide all dependencies; no fallback initialization.
      */
     public PlantDetailViewModel(@NonNull Application application,
             @NonNull PlantRepositoryContract repository,
@@ -61,29 +62,8 @@ public class PlantDetailViewModel extends AndroidViewModel {
             com.gersseba.garden.i18n.LocaleManager localeManager) {
         super(application);
         this.repository = repository;
-
-        LocalizedTextRepository tmp = localizedTextRepository;
-        if (tmp == null) {
-            try {
-                tmp = new LocalizedTextRepository(application);
-            } catch (Exception ignored) {
-                // In unit tests the Room database may not be available; fall back to null repository.
-                tmp = null;
-            }
-        }
-        this.localizedTextRepository = tmp;
-
-        if (localeManager == null) {
-            com.gersseba.garden.i18n.SettingsDataStoreImpl store = null;
-            try {
-                store = com.gersseba.garden.i18n.SettingsDataStoreImpl.getInstance(application);
-            } catch (Exception ignored) {
-                // tests may not provide DataStore; localeManager will be null and fallback to Locale.getDefault()
-            }
-            this.localeManager = store == null ? null : new com.gersseba.garden.i18n.LocaleManager(store);
-        } else {
-            this.localeManager = localeManager;
-        }
+        this.localizedTextRepository = localizedTextRepository;
+        this.localeManager = localeManager;
 
         this.photoSummaryLiveData = Transformations.switchMap(selectedPhotoId, photoId -> {
             if (photoId == null || this.localizedTextRepository == null) {

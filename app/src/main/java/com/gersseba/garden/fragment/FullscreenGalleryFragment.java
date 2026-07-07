@@ -16,6 +16,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.gersseba.garden.R;
 import com.gersseba.garden.adapter.FullscreenPhotoAdapter;
 import com.gersseba.garden.databinding.FragmentFullscreenGalleryBinding;
+import com.gersseba.garden.di.ServiceLocator;
+import com.gersseba.garden.di.ViewModelFactory;
 import com.gersseba.garden.model.PlantPhoto;
 import com.gersseba.garden.viewmodel.PlantDetailViewModel;
 
@@ -41,7 +43,11 @@ public class FullscreenGalleryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(PlantDetailViewModel.class);
+        ServiceLocator serviceLocator = ServiceLocator.getInstance(requireContext());
+        ViewModelFactory factory = new ViewModelFactory(
+                (android.app.Application) requireContext().getApplicationContext(),
+                serviceLocator);
+        viewModel = new ViewModelProvider(requireActivity(), factory).get(PlantDetailViewModel.class);
 
         int startPosition = 0;
         if (getArguments() != null) {

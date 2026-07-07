@@ -49,9 +49,10 @@ public class ServiceLocator {
 
     /**
      * Returns the singleton AppDatabase instance.
+     * Thread-safe lazy initialization.
      */
     @NonNull
-    public AppDatabase getAppDatabase() {
+    public synchronized AppDatabase getAppDatabase() {
         if (appDatabase == null) {
             appDatabase = AppDatabase.getInstance(context);
         }
@@ -60,9 +61,10 @@ public class ServiceLocator {
 
     /**
      * Returns the singleton PlantRepository instance.
+     * Thread-safe lazy initialization.
      */
     @NonNull
-    public PlantRepositoryContract getPlantRepository() {
+    public synchronized PlantRepositoryContract getPlantRepository() {
         if (plantRepository == null) {
             plantRepository = new PlantRepository(getAppDatabase());
         }
@@ -71,9 +73,10 @@ public class ServiceLocator {
 
     /**
      * Returns the singleton LocalizedTextRepository instance.
+     * Thread-safe lazy initialization.
      */
     @NonNull
-    public LocalizedTextRepository getLocalizedTextRepository() {
+    public synchronized LocalizedTextRepository getLocalizedTextRepository() {
         if (localizedTextRepository == null) {
             localizedTextRepository = new LocalizedTextRepository(getAppDatabase());
         }
@@ -82,9 +85,10 @@ public class ServiceLocator {
 
     /**
      * Returns the singleton LocaleManager instance.
+     * Thread-safe lazy initialization.
      */
     @NonNull
-    public LocaleManager getLocaleManager() {
+    public synchronized LocaleManager getLocaleManager() {
         if (localeManager == null) {
             SettingsDataStoreImpl settingsDataStore = SettingsDataStoreImpl.getInstance(context);
             localeManager = new LocaleManager(settingsDataStore);
@@ -124,5 +128,6 @@ public class ServiceLocator {
         this.localeManager = manager;
     }
 }
+
 
 

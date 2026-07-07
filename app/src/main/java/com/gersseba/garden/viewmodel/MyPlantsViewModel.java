@@ -31,6 +31,18 @@ public class MyPlantsViewModel extends AndroidViewModel {
     private final String[] defaultPhotoSummaries;
     private final int[] defaultPhotoDrawables;
 
+    /**
+     * Constructor accepting Application parameter.
+     *
+     * DEPRECATED: This constructor performs manual instantiation of dependencies.
+     * For new code, use {@link com.gersseba.garden.di.ViewModelFactory} to ensure
+     * proper dependency injection via {@link com.gersseba.garden.di.ServiceLocator}.
+     *
+     * Kept for backward compatibility with existing code that may instantiate this
+     * ViewModel directly (e.g., before ServiceLocator migration was complete).
+     * This should not be used in new fragments or activities; migrate to ViewModelFactory instead.
+     */
+    @Deprecated
     public MyPlantsViewModel(@NonNull Application application) {
         this(
                 application,
