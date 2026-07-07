@@ -21,7 +21,11 @@ import java.util.concurrent.Executors;
 public class LocaleManager {
     private static volatile LocaleManager INSTANCE;
 
-    private static final ExecutorService DEFAULT_EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final ExecutorService DEFAULT_EXECUTOR = Executors.newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "locale-manager-thread");
+        thread.setDaemon(true);
+        return thread;
+    });
 
     private final SettingsDataStore settings;
     private final ExecutorService executor;
@@ -99,4 +103,5 @@ public class LocaleManager {
         return locale != null && supportedLocales.contains(locale);
     }
 }
+
 
