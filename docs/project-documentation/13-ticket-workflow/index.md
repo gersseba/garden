@@ -1,283 +1,314 @@
 ---
-title: "13 — Ticket Workflow"
-chapter: 13
-slug: ticket-workflow
-status: current
+title: "Cloud Team Workflow Visualization"
+slug: "cloud-team-workflow"
+status: reference
 ---
 
-# Ticket Workflow
+# Cloud Team Workflow Visualization
 
-## Purpose
+This document provides detailed workflow diagrams for the Cloud Team agents (Cloud PO, Cloud DEV, Cloud QA) and their coordination.
 
-This chapter describes how the garden app team — both human and AI agents — works on individual features using a ticket-based development cycle. It covers the full lifecycle from feature description through GitHub Issue creation, implementation, code review, and merge.
-
----
-
-## How It Works
-
-### 1. User Describes Features → Producer Creates Tickets
-
-The user describes a set of features to the **Producer (Remy)** agent. The Producer:
-
-- Reads `docs/project-documentation/index.md` for current project state
-- Breaks each feature into discrete, independently-implementable GitHub Issues
-- Each issue includes: title, description, acceptance criteria, technical notes, and labels
-- Presents a prioritized ticket plan to the user (with dependency order)
-- **Waits for explicit user approval** before starting execution
-
-Example output from the Producer:
-
-```
-## Ticket Plan — Room Database Layer
-
-I've created 3 tickets:
-
-| # | Title              | Labels         | Depends On |
-|---|--------------------|----------------|------------|
-| #2 | Room Entities     | database       | —          |
-| #3 | Plant ViewModel   | mvvm, database | #2         |
-| #4 | Garden Fragment   | ui             | #3         |
-
-Estimated order: #2 → #3 → #4
-
-Ready to start? Say "go" and I'll orchestrate the team.
-```
-
-### 2. User Says "Go" → Producer Orchestrates
-
-Once the user approves, the Producer drives the execution loop for each ticket:
+## Complete Cloud Team Workflow
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant Producer
-    participant Dev
+    participant PO as Cloud PO
     participant GitHub
+    participant DEV as Cloud DEV
+    participant Copilot as Copilot Review
+    participant QA as Cloud QA
 
-    User->>Producer: Describe features
-    Producer->>GitHub: Create issues with acceptance criteria
-    Producer->>User: Present ticket plan
-    User->>Producer: "go"
+    User->>PO: Describe feature or bug
+    PO->>GitHub: Create ticket #{N}<br/>with acceptance criteria
+    PO->>GitHub: Assign to Cloud DEV
+    PO->>User: "Ticket #{N} created and assigned"
 
-    loop Each ticket in dependency order
-        Producer->>Dev: Hand off ticket #{N}
-        Dev->>GitHub: branch + implement + PR
-        Dev->>Producer: PR opened
-        
-        Producer->>GitHub: Request Copilot review for PR #{N}
-        Producer->>User: Report PR creation & wait for review
-        
-        User->>Producer: "check PR review"
+    DEV->>GitHub: Read ticket #{N}
+    DEV->>DEV: git checkout -b feature/{N}-kebab-title
+    DEV->>DEV: Implement feature + tests
+    DEV->>GitHub: Create PR: "Feature #{N} <Description>"
+    DEV->>GitHub: Push to feature/{N}-kebab-title
 
-        alt Changes requested
-            Producer->>Dev: Address comments
-            Dev->>GitHub: Push fixes, reply to comments
-            Producer->>GitHub: Request re-review
-        end
+    GitHub->>Copilot: Auto-request review
+    Copilot->>GitHub: Review PR
 
-        Producer->>GitHub: Merge approved PR
-        Dev->>GitHub: git merge --no-ff, delete branch
+    alt Copilot Approves ✅
+        GitHub->>DEV: APPROVE event
+        DEV->>GitHub: Assign to Cloud QA
+        DEV->>User: "PR approved by Copilot, assigned to QA"
+    else Copilot Requests Changes 🔄
+        GitHub->>DEV: REQUEST_CHANGES event
+        DEV->>DEV: Fix issues on same branch
+        DEV->>GitHub: git push origin feature/{N}-...
+        GitHub->>DEV: Reply to each comment
+        GitHub->>Copilot: Auto-request re-review
+        Copilot->>GitHub: Review updated PR
+        Note over DEV,Copilot: Loop until approved
     end
 
-    Producer->>User: All tickets complete
+    QA->>GitHub: Read PR #{N}
+    QA->>GitHub: Read ticket #{N}
+    QA->>GitHub: Review PR diff
+
+    alt All Criteria Met ✅
+        QA->>GitHub: Submit APPROVE review
+        QA->>GitHub: Merge PR with --no-ff
+        GitHub->>GitHub: Auto-close ticket #{N}<br/>(via "Fixes #{N}")
+        QA->>User: "PR merged, ticket closed"
+    else Criteria Not Met ❌
+        QA->>GitHub: Submit REQUEST_CHANGES
+        QA->>GitHub: Assign back to Cloud DEV
+        QA->>User: "QA feedback: assign to DEV"
+        DEV->>DEV: Read QA comments
+        DEV->>DEV: Fix acceptance criteria issues
+        DEV->>GitHub: Push fixes
+        Note over QA,DEV: Loop until criteria met
+    end
 ```
 
 ---
 
-## Naming Conventions
+## Cloud PO Workflow
 
-Consistent naming makes tickets traceable end-to-end.
+The Product Owner is responsible for understanding requirements and creating well-defined tickets.
 
-| Artifact | Pattern | Example |
-|----------|---------|---------|
-| **Branch** | `feature/{N}-kebab-title` | `feature/2-room-entities` |
-| **PR Title** | `#{N} {Short Title}` | `#2 Room Entities` |
-| **Commit** | `type: description (Fixes #{N})` | `feat: add PlantEntity (Fixes #2)` |
-| **Merge** | `git merge --no-ff` | Always — never squash or rebase |
-
-### Why `--no-ff`?
-
-The `--no-ff` flag preserves each individual commit in the main branch history. This enables:
-- Automatic GitHub issue closure via `Fixes #{N}` in commit messages
-- Per-commit traceability back to the ticket that introduced each change
-- Clean `git log` that shows when each ticket was merged
-
----
-
-## GitHub Issue Template
-
-Every ticket the Producer creates follows this structure:
-
-```markdown
-## What to Build
-[1-3 sentences describing the feature and its purpose in the app]
-
-## Acceptance Criteria
-- [ ] [Specific, observable outcome]
-- [ ] [Another criterion]
-- [ ] Unit tests pass (`./gradlew test`)
-- [ ] No hardcoded strings
-
-## Technical Notes
-[Relevant files, architecture decisions, patterns to follow]
-[Reference: docs/project-documentation/ chapter if applicable]
-
-## Definition of Done
-- [ ] Branch `feature/{N}-kebab-title` pushed
-- [ ] PR opened as `#{N} {Title}`
-- [ ] GitHub review approved
-- [ ] PR merged to main with `--no-ff`
-- [ ] This issue auto-closed
+```mermaid
+flowchart TD
+    A["User describes<br/>feature or bug"] --> B["Cloud PO reads<br/>project docs"]
+    B --> C["Understand current<br/>app state"]
+    C --> D["Analyze user<br/>requirement"]
+    D --> E{"Is requirement<br/>clear and<br/>feasible?"}
+    E -->|No| F["Ask user<br/>clarifying questions"]
+    F --> D
+    E -->|Yes| G["Break into<br/>discrete tickets"]
+    G --> H["For each ticket:<br/>acceptance criteria<br/>+ technical notes"]
+    H --> I["Create GitHub<br/>issue #{N}"]
+    I --> J["Assign to<br/>Cloud DEV"]
+    J --> K["Report to user:<br/>Ticket #{N} created"]
+    
+    style A fill:#e1f5ff
+    style J fill:#c8e6c9
+    style K fill:#fff9c4
 ```
 
 ---
 
-## Code Review Standards
+## Cloud DEV Workflow
 
-Code reviews (native GitHub reviews, often assisted by Copilot) should check five categories in priority order:
+The developer is responsible for implementing assigned tickets and managing the review cycle.
 
-### Blocking (must fix before merge)
-
-| Category | Key Checks |
-|----------|-----------|
-| **Architecture** | MVVM followed, no Fragment refs in ViewModel, Room DAOs only, coroutines for async |
-| **Code Quality** | No hardcoded strings/colors, ViewBinding only, focused methods, naming conventions |
-| **Android-Specific** | API keys via `BuildConfig`, EXIF stripped before Gemini, errors handled gracefully |
-| **Testing** | Unit tests for new business logic, Gemini API mocked, error paths covered |
-
-### Non-Blocking (comment, but don't block merge)
-
-| Category | Key Checks |
-|----------|-----------|
-| **Documentation** | Javadoc on public methods, inline comments for complex logic |
-
----
-
-## Iteration Protocol
-
-After a GitHub review submits `REQUEST_CHANGES`:
-
-1. **Dev reads all comments** — understands every thread
-2. **Dev fixes issues** — commits to the same branch: `fix: address review comments (Fixes #N)`
-3. **Dev pushes** — `git push origin feature/{N}-kebab-title`
-4. **Dev replies to every comment** — references the commit hash where the fix lives
-5. **Producer/Dev request re-review** — to notify reviewers of updates
-6. **PR state re-evaluated** — resolving threads one by one
-7. **Approval** — when all blocking threads resolved
-
----
-
-## Agents Reference
-
-| Agent | File | Role in Workflow |
-|-------|------|-----------------|
-| **Producer (Remy)** | `.github/agents/ai-team-producer.agent.md` | Creates tickets, presents plan, waits for "go", orchestrates handoffs, requests GitHub reviews, confirms closure |
-| **Dev Team (Nova/Sage/Milo)** | `.github/agents/ai-team-dev.agent.md` | Reads issue, creates branch, implements, opens PR, iterates on review, merges |
-
-Each agent definition is **self-contained** — it includes the full workflow that agent needs to execute its role without needing to reference external files.
-
----
-
-## Worked Example: Ticket #2 Room Entities
-
-### Producer Creates the Ticket
-
-```
-User: "We need Room entities for plants and photos."
-
-Producer:
-  - Reads project docs
-  - Creates GitHub Issue #2: "Room Entities"
-    - What to Build: PlantEntity, PhotoEntity, DAOs, AppDatabase
-    - Acceptance Criteria: entities created, DAOs with CRUD, unit tests pass
-    - Labels: database, android
-  - Presents: "Created #2. Ready to start? Say 'go'."
-```
-
-### User Approves, Dev Implements
-
-```
-User: "go"
-
-Producer → Dev: "Work on ticket #2: Room Entities"
-
-Dev:
-  - Reads issue #2 acceptance criteria
-  - git checkout -b feature/2-room-entities
-  - Implements PlantEntity, PhotoEntity, PlantDao, PhotoDao, AppDatabase
-  - Writes unit tests
-  - git push origin feature/2-room-entities
-  - Opens PR: "#2 Room Entities"
-  - Reports: "PR opened: #2 Room Entities"
-```
-
-### Producer Hands Off to Reviewer
-
-```
-Producer → Reviewer: "Review PR #2: Room Entities"
-
-Reviewer:
-  - Reads PR diff
-  - Loads android-java.instructions.md, garden-plant-features.instructions.md
-  - Finds: "PlantDao methods return raw List<PlantEntity>, not LiveData"
-  - Adds inline comment:
-    "Architecture — DAO methods must return LiveData<List<PlantEntity>>.
-     This enables reactive UI updates (fragments observe and auto-refresh).
-     Suggested fix: change return type to LiveData<> on all query methods.
-     Reference: .github/instructions/garden-plant-features.instructions.md → Plant Entity Lifecycle"
-  - Submits: REQUEST_CHANGES
-```
-
-### Dev Iterates
-
-```
-Dev:
-  - Reads comment
-  - Changes DAO return types to LiveData<>
-  - git commit -m "fix: return LiveData from DAO queries (Fixes #2)"
-  - git push
-  - Replies: "Fixed in commit abc1234. All DAO methods now return LiveData."
-
-Reviewer:
-  - Re-reads commit abc1234
-  - Verifies LiveData used correctly
-  - Resolves thread ✅
-  - Submits: APPROVE
-  - "Review complete. All issues resolved. Ready to merge. Use git merge --no-ff."
-```
-
-### Dev Merges
-
-```
-Producer → Dev: "Reviewer approved #2. Merge."
-
-Dev:
-  - git checkout main && git pull origin main
-  - git merge feature/2-room-entities --no-ff
-  - git push origin main
-  - git push origin --delete feature/2-room-entities
-  - GitHub auto-closes issue #2 (via "Fixes #2" in commits)
-  - Reports: "Ticket #2 merged and closed."
+```mermaid
+flowchart TD
+    A["Ticket #{N}<br/>assigned to DEV"] --> B["Read ticket<br/>acceptance criteria"]
+    B --> C["Create branch:<br/>feature/{N}-kebab-title"]
+    C --> D["Implement<br/>feature + tests"]
+    D --> E["Run tests<br/>./gradlew test lint"]
+    E --> F{"Tests<br/>pass?"}
+    F -->|No| D
+    F -->|Yes| G["Create PR:<br/>Feature #{N} <Description>"]
+    G --> H["Copilot<br/>auto-reviews"]
+    H --> I{"Copilot<br/>approved?"}
+    I -->|No| J["Read review<br/>comments"]
+    J --> K["Fix issues<br/>on same branch"]
+    K --> L["Reply to each<br/>comment"]
+    L --> M["git push origin<br/>feature/{N}-..."]
+    M --> H
+    I -->|Yes| N["Assign to<br/>Cloud QA"]
+    N --> O["Report: PR approved<br/>by Copilot"]
+    
+    style A fill:#e1f5ff
+    style N fill:#c8e6c9
+    style O fill:#fff9c4
 ```
 
 ---
 
-## Troubleshooting
+## Cloud QA Workflow
 
-**Q: PR has merge conflicts with main.**
-```bash
-git fetch origin
-git merge origin/main  # or rebase if not yet pushed
-# resolve conflicts
-git push origin feature/{N}-...
+The QA agent verifies that PR changes satisfy ticket acceptance criteria.
+
+```mermaid
+flowchart TD
+    A["PR #{N}<br/>assigned to QA"] --> B["Read original<br/>ticket #{N}"]
+    B --> C["Extract acceptance<br/>criteria"]
+    C --> D["Read PR<br/>diff"]
+    D --> E["For each criterion:<br/>is it implemented<br/>+ tested?"]
+    E --> F{"All criteria<br/>met?"}
+    F -->|No| G["Submit<br/>REQUEST_CHANGES"]
+    G --> H["List unmet<br/>criteria + fixes"]
+    H --> I["Assign back to<br/>Cloud DEV"]
+    I --> J["DEV pushes<br/>fixes"]
+    J --> K["QA re-reviews"]
+    K --> E
+    F -->|Yes| L["Submit<br/>APPROVE"]
+    L --> M["Merge PR<br/>--no-ff"]
+    M --> N["GitHub auto-closes<br/>ticket #{N}"]
+    N --> O["Report:<br/>PR merged,<br/>ticket closed"]
+    
+    style A fill:#e1f5ff
+    style M fill:#c8e6c9
+    style O fill:#fff9c4
 ```
 
-**Q: Reviewer goes quiet mid-iteration.**
-The PR is still open. Call the Reviewer agent again with: "Continue reviewing PR #{N} — dev has pushed fixes."
+---
 
-**Q: Dev is blocked (depends on another ticket not yet merged).**
-Dev reports to Producer. Producer holds the ticket and moves to the next independent ticket first.
+## State Transitions
 
-**Q: Two tickets have no dependencies — can they run in parallel?**
-Yes. Producer can hand both to Dev simultaneously in separate branches. Each follows the same workflow independently.
+### Ticket State
 
+```mermaid
+stateDiagram-v2
+    [*] --> Created: Cloud PO creates issue
+    Created --> AssignedToDev: Cloud PO assigns to DEV
+    AssignedToDev --> InDev: Cloud DEV reads and starts
+    InDev --> PRCreated: Cloud DEV opens PR
+    PRCreated --> ReviewInProgress: Copilot auto-reviews
+    ReviewInProgress --> ReviewChanges: Copilot requests changes
+    ReviewChanges --> ReviewInProgress: Cloud DEV pushes fixes
+    ReviewInProgress --> Approved: Copilot approves
+    Approved --> AssignedToQA: Cloud DEV assigns to QA
+    AssignedToQA --> QAReview: Cloud QA reviews
+    QAReview --> QAChanges: QA requests changes
+    QAChanges --> AssignedToDev
+    QAReview --> Merged: All criteria met
+    Merged --> [*]
+    
+    note right of Approved
+      Ready for quality verification
+    end note
+    
+    note right of Merged
+      Feature in main branch
+    end note
+```
+
+---
+
+## Approval Gates
+
+The workflow includes two approval gates:
+
+### Gate 1: Copilot Code Review ✅
+- **Who:** Copilot (automated)
+- **When:** After Cloud DEV opens PR
+- **Checks:**
+    - Code quality and conventions
+    - Architecture patterns (MVVM, Repository)
+    - No hardcoded strings
+    - Tests added for business logic
+    - Error handling
+- **Outcome:** APPROVE or REQUEST_CHANGES
+- **Next Step:** If approved, assign to Cloud QA
+
+### Gate 2: QA Acceptance Verification ✅
+- **Who:** Cloud QA (manual)
+- **When:** After Copilot approves
+- **Checks:**
+    - PR changes implement ticket acceptance criteria
+    - All acceptance criteria are verified
+    - No edge cases missed
+- **Outcome:** APPROVE (merge) or REQUEST_CHANGES (back to DEV)
+- **Next Step:** If approved, merge with `--no-ff`
+
+---
+
+## Loop Patterns
+
+### Copilot Review Loop (DEV ↔ Copilot)
+
+```mermaid
+graph LR
+    A["DEV opens<br/>PR"] -->|Auto-review| B["Copilot<br/>reviews"]
+    B -->|APPROVE| C["Assigned<br/>to QA"]
+    B -->|REQUEST_CHANGES| D["DEV fixes<br/>issues"]
+    D -->|git push| E["Auto re-review"]
+    E --> B
+```
+
+### QA Review Loop (QA ↔ DEV)
+
+```mermaid
+graph LR
+    A["QA reads<br/>PR + ticket"] --> B{"All acceptance<br/>criteria<br/>met?"}
+    B -->|Yes| C["Merge<br/>with --no-ff"]
+    B -->|No| D["Submit<br/>REQUEST_CHANGES"]
+    D --> E["Assign back<br/>to DEV"]
+    E --> F["DEV fixes<br/>acceptance issues"]
+    F --> G["DEV pushes<br/>fixes"]
+    G --> A
+```
+
+---
+
+## Example: Feature #42 Plant Watering Reminders
+
+### PO Phase
+```
+User: "I want email reminders when plants need watering."
+
+Cloud PO:
+  1. Reads docs → understands CareScheduleService architecture
+  2. Creates issue #42: "Email Reminders for Plant Watering"
+     - Problem: Users need proactive notifications
+     - Acceptance:
+       - Emails sent 24h before watering task
+       - Users can toggle per-plant
+       - Global disable setting
+       - All strings in strings.xml
+     - Technical: Extend CareScheduleService, add EmailService
+  3. Assigns #42 to Cloud DEV
+```
+
+### DEV Phase
+```
+Cloud DEV:
+  1. git checkout -b feature/42-add-plant-watering-reminder
+  2. Implement EmailReminderService + CareScheduleService updates
+  3. Add unit tests for scheduling logic
+  4. git push origin feature/42-add-plant-watering-reminder
+  5. Create PR: "Feature #42 Add Plant Watering Reminder"
+  
+  Copilot reviews:
+    - Requests: "DAO must return LiveData, not raw List"
+  
+  6. Fix PlantDao return types
+  7. git push origin feature/42-add-plant-watering-reminder
+  8. Reply to comment: "Fixed in commit abc1234def"
+  
+  Copilot approves ✅
+  
+  9. Assign to Cloud QA
+  10. Report: "PR #42 approved by Copilot"
+```
+
+### QA Phase
+```
+Cloud QA:
+  1. Read #42 acceptance criteria
+  2. Review PR diff
+  3. Check implementation:
+     ✅ Emails sent 24h before watering
+     ✅ Per-plant toggle in settings
+     ✅ Global disable setting
+     ✅ Unit tests comprehensive
+     ✅ All strings in strings.xml
+  
+  4. Submit APPROVE
+  5. Merge PR with --no-ff
+  6. GitHub auto-closes #42 (via "Fixes #42" in commits)
+  7. Report: "PR #42 merged. Feature in main branch."
+```
+
+---
+
+## Key Principles
+
+1. **Ticket-First** — All work starts with a ticket
+2. **Clear Criteria** — Acceptance criteria drive quality gates
+3. **Automated Review** — Copilot reviews all PRs automatically
+4. **Double Gate** — Both code quality (Copilot) + acceptance (QA) required
+5. **Traceable** — Ticket number in branch, PR title, and commits
+6. **Isolated Work** — Each ticket has one branch, one PR
+7. **Auto-Closure** — "Fixes #{N}" in commits auto-closes issue
+8. **No-Fast-Forward** — `--no-ff` merges preserve history
