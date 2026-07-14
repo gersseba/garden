@@ -117,9 +117,10 @@ Use `github/issue_write` with `method: 'create'` to open the issue.
 
 ### Step 4: Assign to AI-DEV
 
-Use `github/update_pull_request` (or `github/issue_write`) to:
+Use `github/issue_write` to:
 - **Assign to:** `ai-dev`
 - **Set labels:** feature/bug, component tags
+- **Set status:** `Todo` (default starting status)
 
 Report to user: *"Created ticket #{N}: {Title}. Assigned to AI-DEV for implementation."*
 

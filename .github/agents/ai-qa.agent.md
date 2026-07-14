@@ -268,11 +268,13 @@ github/merge_pull_request(
 )
 ```
 
-4. Verify auto-close:
+4. **Update ticket status to "Done"** — use `github/issue_write` with `issue_fields: [{field_name: "Status", field_option_name: "Done"}]`
+
+5. Verify auto-close:
    - GitHub should auto-close ticket #{N} (via "Fixes #42" in commit message)
    - Confirm by checking issue status within 1 minute
 
-5. Report:
+6. Report:
 ```
 PR #N merged to main. Ticket #N auto-closed. Feature available in main branch.
 ```

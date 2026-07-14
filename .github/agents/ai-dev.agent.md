@@ -75,6 +75,7 @@ You are assigned ticket #{N}.
 3. Extract **technical notes** — these guide your implementation
 4. Identify **dependencies** — do other tickets need to merge first?
 5. Note **naming conventions** for this ticket
+6. **Update ticket status to "In Progress"** — use `github/issue_write` with `issue_fields: [{field_name: "Status", field_option_name: "In Progress"}]`
 
 ### Step 2: Clarify If Needed
 If anything is ambiguous:
@@ -231,6 +232,7 @@ Fixes #42
 - Include `Fixes #{N}` in description (auto-closes issue)
 - Reference files changed and testing done
 - This automatically triggers Copilot review
+- **Update ticket status to "In Review"** — use `github/issue_write` with `issue_fields: [{field_name: "Status", field_option_name: "In Review"}]`
 
 ---
 
@@ -242,8 +244,9 @@ Fixes #42
 
 **Your actions:**
 1. **Verify Copilot approved** — Read the approval comment
-2. **Assign to AI-QA** — Use `github/update_pull_request` with `assignees: ['ai-qa']`
-3. **Report completion** — Post comment: "PR approved by Copilot. Assigned to AI-QA for acceptance verification."
+2. **Update ticket status to "In QA"** — use `github/issue_write` with `issue_fields: [{field_name: "Status", field_option_name: "In QA"}]`
+3. **Assign to AI-QA** — Use `github/update_pull_request` with `assignees: ['ai-qa']`
+4. **Report completion** — Post comment: "PR approved by Copilot. Assigned to AI-QA for acceptance verification."
 
 **Next:** AI-QA takes over. They verify acceptance criteria, then merge.
 

@@ -155,33 +155,46 @@ flowchart TD
 
 ## State Transitions
 
-### Ticket State
+### Ticket Status Field
+
+The GitHub issue Status field transitions through these states:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Created: Cloud PO creates issue
-    Created --> AssignedToDev: Cloud PO assigns to DEV
-    AssignedToDev --> InDev: Cloud DEV reads and starts
-    InDev --> PRCreated: Cloud DEV opens PR
-    PRCreated --> ReviewInProgress: Copilot auto-reviews
-    ReviewInProgress --> ReviewChanges: Copilot requests changes
-    ReviewChanges --> ReviewInProgress: Cloud DEV pushes fixes
-    ReviewInProgress --> Approved: Copilot approves
-    Approved --> AssignedToQA: Cloud DEV assigns to QA
-    AssignedToQA --> QAReview: Cloud QA reviews
-    QAReview --> QAChanges: QA requests changes
-    QAChanges --> AssignedToDev
-    QAReview --> Merged: All criteria met
-    Merged --> [*]
+    [*] --> Todo: AI-PO creates ticket
+    Todo --> InProgress: AI-DEV starts work
+    InProgress --> InReview: AI-DEV opens PR<br/>(Copilot auto-reviews)
+    InReview --> InReview: Copilot requests changes<br/>(AI-DEV iterates)
+    InReview --> InQA: Copilot approves<br/>(AI-DEV assigns to QA)
+    InQA --> InQA: QA requests changes<br/>(AI-DEV fixes + pushes)
+    InQA --> Done: QA approves<br/>(QA merges PR)
+    Done --> [*]
     
-    note right of Approved
-      Ready for quality verification
+    note right of InReview
+      Code review loop
+      (Copilot feedback)
     end note
     
-    note right of Merged
-      Feature in main branch
+    note right of InQA
+      Acceptance gate
+      (QA verification)
+    end note
+    
+    note right of Done
+      Merged to main
+      Ticket auto-closed
     end note
 ```
+
+### Status Mapping to Workflow Phases
+
+| Phase | Actor | Status | Activity |
+|-------|-------|--------|----------|
+| Intake | AI-PO | **Todo** | Ticket created with acceptance criteria |
+| Implementation | AI-DEV | **In Progress** | Coding, testing, committing |
+| Code Review | Copilot (auto) | **In Review** | Automated review loop |
+| Acceptance | AI-QA | **In QA** | Verify criteria, approve/reject |
+| Shipped | GitHub | **Done** | Merged to main, feature live |
 
 ---
 
